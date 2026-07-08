@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credit Card Payoff Calculator - Free Debt Payoff Planner</title>
+  <meta name="description" content="Free credit card payoff calculator: see how long it takes to pay off your credit card and how much interest you'll pay. Find out how extra payments save you money.">
+  <meta name="keywords" content="credit card payoff, debt payoff calculator, credit card payment, interest calculator, debt snowball, credit card debt">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/i18n.js?v=3"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="site-logo"><span class="logo-icon">🛠️</span> Free Online Calculators</a>
+      <nav class="site-nav">
+        <a href="../index.html" data-i18n="nav.home">Home</a>
+        <a href="../index.html#finance" class="active" data-i18n="nav.finance">Finance</a>
+        <a href="../index.html#health" data-i18n="nav.health">Health</a>
+        <a href="../index.html#math" data-i18n="nav.math">Math</a>
+        <a href="../index.html#converters" data-i18n="nav.convert">Convert</a>
+        <a href="../index.html#text" data-i18n="nav.text">Text</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option><option value="zh">简体中文</option>
+          <option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> <span>›</span> <a href="../index.html#finance">Financial Calculators</a> <span>›</span> Credit Card Payoff
+    </div>
+
+    <h1 data-i18n="cc.title">💳 Credit Card Payoff Calculator</h1>
+    <p class="intro" data-i18n="cc.intro">Find out how long it takes to pay off your credit card.</p>
+
+    <div class="calc-card">
+      <div class="input-row">
+        <div class="input-group">
+          <label for="balance" data-i18n="cc.input.balance">Current Balance ($)</label>
+          <input type="number" id="balance" value="5000" min="1" step="100">
+        </div>
+        <div class="input-group">
+          <label for="apr" data-i18n="cc.input.apr">APR — Annual Interest Rate (%)</label>
+          <input type="number" id="apr" value="22.99" min="0.1" max="100" step="0.01">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="monthly" data-i18n="cc.input.monthly">Monthly Payment ($)</label>
+          <input type="number" id="monthly" value="200" min="1" step="10">
+        </div>
+        <div class="input-group">
+          <label for="extra"><span data-i18n="cc.input.extra">Extra Monthly Payment ($)</span> <span style="font-weight:400;color:#94a3b8;" data-i18n="cc.input.extra.opt">optional</span></label>
+          <input type="number" id="extra" value="0" min="0" step="10">
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calculate()">💳 <span data-i18n="btn.calculate">Calculate</span></button>
+      <button class="btn-reset" onclick="resetForm()" data-i18n="btn.reset">Reset</button>
+
+      <div class="result-box" id="resultBox">
+        <div class="result-amount" id="resultAmount"></div>
+        <div class="result-detail" id="resultDetail"></div>
+        <div class="result-detail" id="resultCompare" style="margin-top:8px;padding:10px;background:#f0fdf4;border-radius:6px;"></div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>📖 How Credit Card Payoff Works</h2>
+      <p>Credit cards typically have high APRs (20-30%). Making only the <strong>minimum payment</strong> can keep you in debt for decades. By paying more than the minimum, you save enormously on interest.</p>
+      <div class="note note-warning">
+        ⚠️ A $5,000 balance at 23% APR with minimum payments ($150/month) takes <strong>48 months</strong> and costs <strong>$2,100 in interest</strong>. Paying $300/month pays it off in 20 months with only $1,000 in interest.
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>🔗 Related Tools</h2>
+      <div class="related-tools">
+        <a href="compound-interest.html">📈 Compound Interest</a>
+        <a href="loan-calculator.html">🏠 Loan Calculator</a>
+        <a href="tip-calculator.html">💵 Tip Calculator</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p data-i18n="site.footer">🛠️ Free Online Calculators — All computations run locally in your browser. We never collect your data.</p>
+  </footer>
+
+  <script>
+    function calculate() {
+      var balance = parseFloat(document.getElementById('balance').value) || 0;
+      var apr = parseFloat(document.getElementById('apr').value) || 0;
+      var monthly = parseFloat(document.getElementById('monthly').value) || 0;
+      var extra = parseFloat(document.getElementById('extra').value) || 0;
+
+      if (balance <= 0 || apr <= 0 || monthly <= 0) { alert('Please enter valid numbers.'); return; }
+
+      var totalPayment = monthly + extra;
+      var monthlyRate = apr / 100 / 12;
+      if (totalPayment <= balance * monthlyRate) {
+        document.getElementById('resultAmount').textContent = '⚠️ Payment too low — you\'ll never pay off this debt!';
+        document.getElementById('resultBox').classList.add('show');
+        return;
+      }
+
+      // Calculate months to payoff
+      var months = Math.ceil(Math.log(totalPayment / (totalPayment - balance * monthlyRate)) / Math.log(1 + monthlyRate));
+      var totalPaid = totalPayment * months;
+      var totalInterest = totalPaid - balance;
+      var years = Math.floor(months / 12);
+      var remainingMonths = months % 12;
+      var payoffDate = new Date();
+      payoffDate.setMonth(payoffDate.getMonth() + months);
+
+      var dateStr = payoffDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      document.getElementById('resultAmount').innerHTML =
+        '📅 Payoff Time: <strong>' + (years > 0 ? years + ' yr ' : '') + remainingMonths + ' mo</strong> &ensp;(by ' + dateStr + ')';
+
+      document.getElementById('resultDetail').innerHTML =
+        'Monthly Payment: $' + fmt(monthly) + (extra > 0 ? ' + $' + fmt(extra) + ' extra' : '') +
+        ' &ensp;|&ensp; Total Interest: <strong style="color:#dc2626;">$' + fmt(totalInterest) + '</strong>' +
+        ' &ensp;|&ensp; Total Paid: $' + fmt(totalPaid);
+
+      // Compare with minimum payment scenario
+      if (extra === 0) {
+        var minMonths = Math.ceil(Math.log(monthly / (monthly - balance * monthlyRate)) / Math.log(1 + monthlyRate));
+        var minRate = apr / 100 / 12;
+        // If paying 50% extra
+        var extraMonths = Math.ceil(Math.log((monthly*1.5) / ((monthly*1.5) - balance * minRate)) / Math.log(1 + minRate));
+        var extraInterest = (monthly*1.5) * extraMonths - balance;
+        var currentInterest = totalInterest;
+        var saving = currentInterest - extraInterest;
+        document.getElementById('resultCompare').innerHTML =
+          '💡 <strong>Save $' + fmt(Math.max(0, saving)) + '</strong> by paying an extra 50% ($' + fmt(monthly*0.5) + '/mo). Payoff in ' + extraMonths + ' months instead of ' + months + '.';
+      } else {
+        // Compare without extra
+        var baseMonths = Math.ceil(Math.log(monthly / (monthly - balance * monthlyRate)) / Math.log(1 + monthlyRate));
+        var baseInterest = monthly * baseMonths - balance;
+        var saving = baseInterest - totalInterest;
+        document.getElementById('resultCompare').innerHTML =
+          '🎉 You <strong>save $' + fmt(Math.max(0, saving)) + ' in interest</strong> and pay off ' + (baseMonths - months) + ' months earlier by adding $' + fmt(extra) + '/mo!';
+      }
+
+      document.getElementById('resultBox').classList.add('show');
+    }
+
+    function resetForm() {
+      document.getElementById('balance').value = '5000';
+      document.getElementById('apr').value = '22.99';
+      document.getElementById('monthly').value = '200';
+      document.getElementById('extra').value = '0';
+      document.getElementById('resultBox').classList.remove('show');
+    }
+
+    function fmt(n) { return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      calculate();
+      document.getElementById('langSelect').value = LANG; applyI18n(); calculate();
+    });
+    window.switchLang = function(lang) {
+      LANG = lang;
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'es' ? 'es' : lang === 'de' ? 'de' : lang === 'fr' ? 'fr' : 'en';
+      localStorage.setItem('calc_site_lang', lang);
+      applyI18n();
+      calculate();
+    };
+  </script>
+  <script src="../js/tracker.js"></script>
+</body>
+</html>

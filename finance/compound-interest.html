@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compound Interest Calculator - Free Online Investment Growth Calculator</title>
+  <meta name="description" content="Free compound interest calculator: calculate investment growth with monthly contributions. Includes year-by-year breakdown, formula, examples, and the Rule of 72.">
+  <meta name="keywords" content="compound interest calculator, investment calculator, compounding calculator, interest growth, retirement calculator, savings calculator, FV calculator">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/i18n.js?v=3"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Compound Interest Calculator",
+    "url": "https://freeonlinetools-code.github.io/calculator-site/finance/compound-interest.html",
+    "description": "Free online compound interest calculator with monthly contributions and yearly breakdown table.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What is compound interest?", "acceptedAnswer": { "@type": "Answer", "text": "Compound interest is interest earned on both the original principal and the accumulated interest from previous periods. It's essentially 'interest on interest,' which causes wealth to grow exponentially over time." } },
+      { "@type": "Question", "name": "How is compound interest different from simple interest?", "acceptedAnswer": { "@type": "Answer", "text": "Simple interest only earns returns on the original principal. Compound interest earns returns on both principal and accumulated interest, resulting in significantly higher long-term growth." } },
+      { "@type": "Question", "name": "What is the Rule of 72?", "acceptedAnswer": { "@type": "Answer", "text": "The Rule of 72 is a quick way to estimate how long it takes for an investment to double. Divide 72 by the annual rate of return. Example: at 8% annual return, money doubles in approximately 72 ÷ 8 = 9 years." } },
+      { "@type": "Question", "name": "How much difference do monthly contributions make?", "acceptedAnswer": { "@type": "Answer", "text": "Monthly contributions dramatically increase final returns. Investing $500/month at 8% for 30 years yields over $745,000, even though total contributions were only $180,000." } },
+      { "@type": "Question", "name": "Is this calculator free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, completely free. All calculations run locally in your browser. No registration, no data collection." } },
+      { "@type": "Question", "name": "What rate of return should I assume?", "acceptedAnswer": { "@type": "Answer", "text": "Historical reference: S&P 500 averages ~10% annually (before inflation). A balanced portfolio might return 6-8%. For conservative planning, use 5-7%." } }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="site-logo"><span class="logo-icon">🛠️</span> Free Online Calculators</a>
+      <nav class="site-nav">
+        <a href="../index.html" data-i18n="nav.home">Home</a>
+        <a href="../index.html#finance" class="active" data-i18n="nav.finance">Finance</a>
+        <a href="../index.html#health" data-i18n="nav.health">Health</a>
+        <a href="../index.html#math" data-i18n="nav.math">Math</a>
+        <a href="../index.html#converters" data-i18n="nav.convert">Convert</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option>
+          <option value="zh">简体中文</option>
+          <option value="es">Español</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> <span>›</span> <a href="../index.html#finance">Financial Calculators</a> <span>›</span> Compound Interest Calculator
+    </div>
+
+    <h1 data-i18n="ci.title">📈 Compound Interest Calculator</h1>
+    <p class="intro" data-i18n="ci.intro">Calculate how your money grows with compound interest.</p>
+
+    <div class="calc-card">
+      <div class="input-row">
+        <div class="input-group">
+          <label for="principal" data-i18n="ci.input.principal">Initial Investment ($)</label>
+          <input type="number" id="principal" value="10000" min="0" step="100">
+        </div>
+        <div class="input-group">
+          <label for="rate" data-i18n="ci.input.rate">Annual Return (%)</label>
+          <input type="number" id="rate" value="8" min="0" max="100" step="0.1">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="years" data-i18n="ci.input.years">Investment Period (years)</label>
+          <input type="number" id="years" value="10" min="1" max="100">
+        </div>
+        <div class="input-group">
+          <label for="monthly"><span data-i18n="ci.input.monthly">Monthly Contribution ($)</span> <span style="font-weight:400;color:#94a3b8;" data-i18n="ci.input.monthly.opt">optional</span></label>
+          <input type="number" id="monthly" value="0" min="0" step="50">
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calculate()">💰 <span data-i18n="btn.calculate">Calculate</span></button>
+      <button class="btn-reset" onclick="resetForm()" data-i18n="btn.reset">Reset</button>
+
+      <div class="result-box" id="resultBox">
+        <div class="result-amount" id="resultAmount"></div>
+        <div class="result-detail" id="resultDetail"></div>
+        <div style="margin-top:16px;overflow-x:auto;" id="resultTableContainer"></div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2 data-i18n="ci.what_is.title">📖 What Is Compound Interest?</h2>
+      <p data-i18n="ci.what_is.p1">Compound interest is the process of earning "interest on interest." Each period, your returns are added to your principal, creating exponential growth.</p>
+      <p data-i18n="ci.what_is.p2">Albert Einstein reportedly called compound interest "the eighth wonder of the world."</p>
+
+      <h3 data-i18n="ci.formula.title">📐 The Formula</h3>
+      <div class="formula">
+        A = P × (1 + r/n)<sup>nt</sup> + PMT × [((1 + r/n)<sup>nt</sup> − 1) / (r/n)]
+      </div>
+      <p><strong>Where:</strong></p>
+      <ul>
+        <li><strong>A</strong> = Final amount</li>
+        <li><strong>P</strong> = Initial principal</li>
+        <li><strong>r</strong> = Annual interest rate (decimal, e.g. 8% = 0.08)</li>
+        <li><strong>n</strong> = Compounding periods per year (monthly = 12)</li>
+        <li><strong>t</strong> = Number of years</li>
+        <li><strong>PMT</strong> = Monthly contribution</li>
+      </ul>
+
+      <h3>📝 Example</h3>
+      <p>You invest <strong>$10,000</strong> initially, earn <strong>8% annually</strong>, invest for <strong>10 years</strong>, and contribute <strong>$1,000/month</strong>:</p>
+      <ul>
+        <li>Principal growth: $10,000 × (1 + 0.08/12)<sup>120</sup> ≈ <strong>$22,196</strong></li>
+        <li>Total contributed: $10,000 + ($1,000 × 120) = <strong>$130,000</strong></li>
+        <li>Contributions growth: ≈ <strong>$182,946</strong></li>
+        <li>Final balance: ≈ <strong>$205,142</strong></li>
+        <li>Total earnings: ≈ <strong>$75,142</strong></li>
+      </ul>
+
+      <h3>⏱️ Rule of 72: Quick Doubling Estimate</h3>
+      <div class="formula">Years to double ≈ 72 ÷ Annual Return (%)</div>
+      <ul>
+        <li>At 6%: ~<strong>12 years</strong> to double</li>
+        <li>At 8%: ~<strong>9 years</strong> to double</li>
+        <li>At 10%: ~<strong>7.2 years</strong> to double</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2>❓ Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h4>What rate of return should I use?</h4>
+        <p>For reference: US stock market (S&P 500) averages ~10% annually before inflation. A balanced 60/40 portfolio historically returns ~7-8%. For conservative planning, use 5-7%. For aggressive growth assumptions, use 8-10%.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Should I account for inflation?</h4>
+        <p>Yes, for realistic planning. Subtract expected inflation (typically 2-3% in the US) from your rate. For example, if the S&P 500 returns 10% nominally, the real return is ~7% after inflation.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How powerful are monthly contributions?</h4>
+        <p>Extremely. Investing just $500/month at 8% for 30 years grows to approximately $745,000 — even though you only contributed $180,000. The remaining $565,000 is compound growth.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What's the difference between compound and simple interest?</h4>
+        <p>Simple interest only pays on the original principal (linear growth). Compound interest pays on principal + accumulated interest (exponential growth). Over long periods, compound interest dramatically outperforms.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Can I use this for retirement planning?</h4>
+        <p>Yes. Enter your current savings as the initial investment, your expected annual contributions as the monthly amount, and your planned years until retirement. This gives a reasonable estimate based on your assumed return rate.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Is my data safe?</h4>
+        <p>Completely. All calculations happen in your browser using JavaScript. No data is ever sent to any server. No tracking, no cookies, no registration.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>🔗 Related Tools</h2>
+      <div class="related-tools">
+        <a href="loan-calculator.html">🏠 Loan Calculator</a>
+        <a href="roi-calculator.html">📊 ROI Calculator</a>
+        <a href="../math/percentage-calculator.html">💯 Percentage Calculator</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p data-i18n="site.footer">🛠️ Free Online Calculators — All computations run locally in your browser. We never collect your data.</p>
+  </footer>
+
+  <script>
+    function calculate() {
+      var principal = parseFloat(document.getElementById('principal').value) || 0;
+      var annualRate = parseFloat(document.getElementById('rate').value) || 0;
+      var years = parseInt(document.getElementById('years').value) || 0;
+      var monthly = parseFloat(document.getElementById('monthly').value) || 0;
+
+      if (principal < 0 || annualRate < 0 || years <= 0 || monthly < 0) {
+        alert('Please enter valid positive numbers.');
+        return;
+      }
+
+      var monthlyRate = annualRate / 100 / 12;
+      var totalMonths = years * 12;
+
+      var principalFinal = principal * Math.pow(1 + monthlyRate, totalMonths);
+
+      var contributionFinal = 0;
+      if (monthly > 0 && monthlyRate > 0) {
+        contributionFinal = monthly * ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate);
+      } else if (monthly > 0 && monthlyRate === 0) {
+        contributionFinal = monthly * totalMonths;
+      }
+
+      var finalAmount = principalFinal + contributionFinal;
+      var totalInvested = principal + monthly * totalMonths;
+      var totalEarnings = finalAmount - totalInvested;
+
+      document.getElementById('resultAmount').textContent =
+        '💰 ' + t('ci.result.balance') + ' $' + fmt(finalAmount);
+
+      document.getElementById('resultDetail').innerHTML =
+        t('ci.result.invested') + ' $' + fmt(totalInvested) +
+        ' &ensp;|&ensp; ' + t('ci.result.earnings') + ' <strong style="color:#16a34a;">$' + fmt(totalEarnings) + '</strong>' +
+        ' &ensp;|&ensp; ' + t('ci.result.return') + ' ' + (totalInvested > 0 ? ((totalEarnings / totalInvested) * 100).toFixed(1) : '0') + '%';
+
+      var tableHTML = '<table class="result-table"><thead><tr>' +
+        '<th>' + t('ci.table.year') + '</th><th>' + t('ci.table.start') + '</th><th>' + t('ci.table.contrib') + '</th><th>' + t('ci.table.interest') + '</th><th>' + t('ci.table.end') + '</th></tr></thead><tbody>';
+
+      var balance = principal;
+      for (var y = 1; y <= years; y++) {
+        var yearStart = balance;
+        var yearDeposit = monthly * 12;
+        for (var m = 0; m < 12; m++) {
+          balance += monthly;
+          balance *= (1 + monthlyRate);
+        }
+        var yearInterest = balance - yearStart - yearDeposit;
+        tableHTML += '<tr>' +
+          '<td>Year ' + y + '</td>' +
+          '<td>$' + fmt(yearStart) + '</td>' +
+          '<td>$' + fmt(yearDeposit) + '</td>' +
+          '<td style="color:#16a34a;">$' + fmt(Math.max(0, yearInterest)) + '</td>' +
+          '<td><strong>$' + fmt(balance) + '</strong></td></tr>';
+      }
+      tableHTML += '</tbody></table>';
+      document.getElementById('resultTableContainer').innerHTML = tableHTML;
+      document.getElementById('resultBox').classList.add('show');
+    }
+
+    function resetForm() {
+      document.getElementById('principal').value = '10000';
+      document.getElementById('rate').value = '8';
+      document.getElementById('years').value = '10';
+      document.getElementById('monthly').value = '0';
+      document.getElementById('resultBox').classList.remove('show');
+    }
+
+    function fmt(num) {
+      return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    window.addEventListener('DOMContentLoaded', function() { calculate(); initI18n(); });
+    function initI18n() {
+      document.getElementById('langSelect').value = LANG;
+      applyI18n(); calculate();
+    }
+    window.switchLang = function(lang) {
+      LANG = lang;
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'es' ? 'es' : lang === 'de' ? 'de' : lang === 'fr' ? 'fr' : 'en';
+      localStorage.setItem('calc_site_lang', lang);
+      applyI18n(); calculate();
+    };
+  </script>
+<script src="../js/tracker.js"></script>
+</body>
+</html>

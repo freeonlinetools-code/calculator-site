@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ideal Weight Calculator - Free Online Healthy Weight Range</title>
+  <meta name="description" content="Free ideal weight calculator using multiple formulas (Devine, Robinson, Miller, Hamwi). Find your healthy weight range based on height, age, and gender.">
+  <meta name="keywords" content="ideal weight calculator, healthy weight, ideal body weight, weight by height, how much should I weigh">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/i18n.js?v=3"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="site-logo"><span class="logo-icon">🛠️</span> Free Online Calculators</a>
+      <nav class="site-nav">
+        <a href="../index.html" data-i18n="nav.home">Home</a>
+        <a href="../index.html#finance" data-i18n="nav.finance">Finance</a>
+        <a href="../index.html#health" class="active" data-i18n="nav.health">Health</a>
+        <a href="../index.html#math" data-i18n="nav.math">Math</a>
+        <a href="../index.html#converters" data-i18n="nav.convert">Convert</a>
+        <a href="../index.html#text" data-i18n="nav.text">Text</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option><option value="zh">简体中文</option>
+          <option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> <span>›</span> <a href="../index.html#health">Health Calculators</a> <span>›</span> Ideal Weight
+    </div>
+
+    <h1 data-i18n="iw.title">⚖️ Ideal Weight Calculator</h1>
+    <p class="intro" data-i18n="iw.intro">Find your ideal body weight using multiple medical formulas.</p>
+
+    <div class="calc-card">
+      <div class="input-row">
+        <div class="input-group">
+          <label for="gender" data-i18n="iw.input.gender">Sex</label>
+          <select id="gender"><option value="male" data-i18n="iw.input.gender.male">Male</option><option value="female" data-i18n="iw.input.gender.female">Female</option></select>
+        </div>
+        <div class="input-group">
+          <label for="height" data-i18n="iw.input.height">Height (cm)</label>
+          <input type="number" id="height" value="175" min="100" max="250">
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calculate()">⚖️ Calculate</button>
+      <button class="btn-reset" onclick="resetForm()">Reset</button>
+
+      <div class="result-box" id="resultBox">
+        <div class="result-amount" id="resultAmount"></div>
+        <div class="result-detail" id="resultDetail"></div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>📖 How Ideal Weight Is Calculated</h2>
+      <p>Different medical formulas estimate ideal body weight (IBW). The <strong>Devine formula</strong> is the most widely used in clinical settings. Results vary slightly between formulas.</p>
+      <table class="result-table">
+        <thead><tr><th>Formula</th><th>Male</th><th>Female</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Devine</strong> (1974)</td><td>50 + 2.3 × (ht − 60) kg</td><td>45.5 + 2.3 × (ht − 60) kg</td></tr>
+          <tr><td>Robinson (1983)</td><td>52 + 1.9 × (ht − 60) kg</td><td>49 + 1.7 × (ht − 60) kg</td></tr>
+          <tr><td>Miller (1983)</td><td>56.2 + 1.41 × (ht − 60) kg</td><td>53.1 + 1.36 × (ht − 60) kg</td></tr>
+          <tr><td>Hamwi (1964)</td><td>48 + 2.7 × (ht − 60) kg</td><td>45.5 + 2.2 × (ht − 60) kg</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;font-size:0.85rem;color:var(--text2);">ht = height in inches. These formulas were developed for adults and may not apply to children or athletes.</p>
+    </div>
+
+    <div class="content-section">
+      <h2>🔗 Related Tools</h2>
+      <div class="related-tools">
+        <a href="bmi-calculator.html">⚖️ BMI Calculator</a>
+        <a href="calorie-calculator.html">🔥 Calorie Calculator</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p data-i18n="site.footer">🛠️ Free Online Calculators — All computations run locally in your browser. We never collect your data.</p>
+  </footer>
+
+  <script>
+    function calculate() {
+      var gender = document.getElementById('gender').value;
+      var heightCm = parseFloat(document.getElementById('height').value) || 0;
+      if (heightCm < 100 || heightCm > 250) { alert('Please enter a valid height.'); return; }
+      var htIn = heightCm / 2.54;
+      var over = Math.max(0, htIn - 60);
+
+      var formulas = {
+        'Devine (1974)': gender === 'male' ? 50 + 2.3 * over : 45.5 + 2.3 * over,
+        'Robinson (1983)': gender === 'male' ? 52 + 1.9 * over : 49 + 1.7 * over,
+        'Miller (1983)': gender === 'male' ? 56.2 + 1.41 * over : 53.1 + 1.36 * over,
+        'Hamwi (1964)': gender === 'male' ? 48 + 2.7 * over : 45.5 + 2.2 * over
+      };
+
+      var values = Object.values(formulas);
+      var avg = values.reduce(function(a,b){return a+b;},0) / values.length;
+      var min = Math.min.apply(null, values);
+      var max = Math.max.apply(null, values);
+
+      document.getElementById('resultAmount').innerHTML =
+        '🎯 Ideal Weight Range: <strong>' + fmt(min) + ' – ' + fmt(max) + ' kg</strong> &ensp;(' + fmtLb(min) + ' – ' + fmtLb(max) + ' lbs)';
+
+      var detailHTML = 'Average across 4 formulas: <strong>' + fmt(avg) + ' kg</strong> (' + fmtLb(avg) + ' lbs)<br>';
+      for (var k in formulas) {
+        detailHTML += k + ': <strong>' + fmt(formulas[k]) + ' kg</strong> (' + fmtLb(formulas[k]) + ' lbs)<br>';
+      }
+      document.getElementById('resultDetail').innerHTML = detailHTML;
+      document.getElementById('resultBox').classList.add('show');
+    }
+
+    function resetForm() {
+      document.getElementById('gender').value = 'male';
+      document.getElementById('height').value = '175';
+      document.getElementById('resultBox').classList.remove('show');
+    }
+
+    function fmt(n) { return n.toFixed(1); }
+    function fmtLb(n) { return (n * 2.20462).toFixed(0); }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      calculate();
+      document.getElementById('langSelect').value = LANG; applyI18n(); calculate();
+    });
+    window.switchLang = function(lang) {
+      LANG = lang;
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'es' ? 'es' : lang === 'de' ? 'de' : lang === 'fr' ? 'fr' : 'en';
+      localStorage.setItem('calc_site_lang', lang);
+      applyI18n();
+      calculate();
+    };
+  </script>
+  <script src="../js/tracker.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Counter - Free Online Character & Word Count Tool</title>
+  <meta name="description" content="Free online word counter and character counter. Count words, characters (with/without spaces), sentences, paragraphs. Real-time results as you type or paste.">
+  <meta name="keywords" content="word counter, character counter, letter count, word count tool, text counter, character count online">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/i18n.js?v=3"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="site-logo"><span class="logo-icon">🛠️</span> Free Online Calculators</a>
+      <nav class="site-nav">
+        <a href="../index.html" data-i18n="nav.home">Home</a>
+        <a href="../index.html#finance" data-i18n="nav.finance">Finance</a>
+        <a href="../index.html#health" data-i18n="nav.health">Health</a>
+        <a href="../index.html#math" data-i18n="nav.math">Math</a>
+        <a href="../index.html#converters" data-i18n="nav.convert">Convert</a>
+        <a href="../index.html#text" class="active" data-i18n="nav.text">Text</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option><option value="zh">简体中文</option>
+          <option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> <span>›</span> <a href="../index.html#text">Text Tools</a> <span>›</span> Word Counter
+    </div>
+
+    <h1 data-i18n="wc.title">📝 Word Counter</h1>
+    <p class="intro" data-i18n="wc.intro">Paste or type your text below. Real-time word count, character count, sentence count, and paragraph count.</p>
+
+    <div class="calc-card">
+      <textarea id="textInput" data-i18n="wc.input.placeholder" placeholder="Type or paste your text here..." oninput="count()" style="width:100%;height:200px;padding:14px;font-size:1rem;border:1.5px solid var(--border);border-radius:8px;resize:vertical;font-family:inherit;line-height:1.6;"></textarea>
+      <button class="btn-reset" onclick="clearText()" style="margin-top:12px;" data-i18n="wc.btn.clear">Clear</button>
+
+      <div class="stats-grid" style="margin-top:16px;">
+        <div class="stat-card green"><div class="label" data-i18n="wc.words">Words</div><div class="value" id="countWords">0</div></div>
+        <div class="stat-card blue"><div class="label" data-i18n="wc.chars">Characters</div><div class="value" id="countChars">0</div></div>
+        <div class="stat-card amber"><div class="label" data-i18n="wc.charsNS">Characters (no spaces)</div><div class="value" id="countCharsNS">0</div></div>
+        <div class="stat-card"><div class="label" data-i18n="wc.sentences">Sentences</div><div class="value" id="countSent">0</div></div>
+        <div class="stat-card"><div class="label" data-i18n="wc.paragraphs">Paragraphs</div><div class="value" id="countPara">0</div></div>
+        <div class="stat-card"><div class="label" data-i18n="wc.reading">Reading Time</div><div class="value" id="readTime">0 min</div></div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>🔗 Related Tools</h2>
+      <div class="related-tools">
+        <a href="password-generator.html">🔐 Password Generator</a>
+        <a href="../math/percentage-calculator.html">💯 Percentage Calculator</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p data-i18n="site.footer">🛠️ Free Online Calculators — All computations run locally in your browser. We never collect your data.</p>
+  </footer>
+
+  <script>
+    function count() {
+      var text = document.getElementById('textInput').value;
+      var words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      var chars = text.length;
+      var charsNS = text.replace(/\s/g, '').length;
+      var sent = text.trim() ? (text.match(/[.!?]+/g) || []).length : 0;
+      var para = text.trim() ? text.trim().split(/\n\n+/).filter(function(p){return p.trim();}).length : 0;
+      var readMin = Math.max(1, Math.ceil(words / 200));
+
+      document.getElementById('countWords').textContent = words.toLocaleString();
+      document.getElementById('countChars').textContent = chars.toLocaleString();
+      document.getElementById('countCharsNS').textContent = charsNS.toLocaleString();
+      document.getElementById('countSent').textContent = sent.toLocaleString();
+      document.getElementById('countPara').textContent = para.toLocaleString();
+      document.getElementById('readTime').textContent = readMin + ' min';
+    }
+
+    function clearText() {
+      document.getElementById('textInput').value = '';
+      count();
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('langSelect').value = LANG; applyI18n();
+    });
+    window.switchLang = function(lang) {
+      LANG = lang;
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'es' ? 'es' : lang === 'de' ? 'de' : lang === 'fr' ? 'fr' : 'en';
+      localStorage.setItem('calc_site_lang', lang);
+      applyI18n();
+    };
+  </script>
+  <script src="../js/tracker.js"></script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="home.title">Free Online Calculators - Finance, Health, Math & Converters</title>
+  <meta name="description" data-i18n="home.subtitle" content="Free online calculators and converters. No sign-up required.">
+  <meta name="keywords" content="online calculator, compound interest calculator, BMI calculator, loan calculator, unit converter, percentage calculator, free calculator">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/i18n.js?v=3"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Free Online Calculators",
+    "url": "https://freeonlinetools-code.github.io/calculator-site/",
+    "description": "Free online calculators for finance, health, math, and unit conversions. No sign-up, all calculations done in your browser.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://freeonlinetools-code.github.io/calculator-site/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo">
+        <span class="logo-icon">🛠️</span> Free Online Calculators
+      </a>
+      <nav class="site-nav" id="siteNav">
+        <a href="#home" class="active" data-i18n="nav.home">Home</a>
+        <a href="#finance" data-i18n="nav.finance">Finance</a>
+        <a href="#health" data-i18n="nav.health">Health</a>
+        <a href="#math" data-i18n="nav.math">Math</a>
+        <a href="#converters" data-i18n="nav.convert">Convert</a>
+        <a href="#text" data-i18n="nav.text">Text</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option>
+          <option value="zh">简体中文</option>
+          <option value="es">Español</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="hero">
+      <h1 data-i18n="home.title">🛠️ Free Online Calculators &amp; Tools</h1>
+      <p data-i18n="home.subtitle">No downloads, no sign-ups. Financial planning, health tracking, math helpers, and unit converters — all free, all in your browser.</p>
+
+      <div class="search-box">
+        <input type="text" id="searchInput" data-i18n="search.placeholder" placeholder="Search tools, e.g. compound interest, BMI, converter…" oninput="filterTools()">
+        <span class="search-icon">🔍</span>
+      </div>
+    </section>
+
+    <!-- ========== Finance ========== -->
+    <section class="section" id="finance">
+      <h2 class="section-title"><span class="icon">💰</span> <span data-i18n="home.section.finance">Financial Calculators</span></h2>
+      <div class="tools-grid">
+        <a href="finance/compound-interest.html" class="tool-card" data-keywords="compound interest investment savings growth retirement FV future value">
+          <span class="card-icon">📈</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.ci">Compound Interest Calculator</h3>
+            <p data-i18n="home.card.ci.desc">See how your money grows over time with the power of compound interest. Enter your initial investment, expected return rate, and monthly contributions. Get a year-by-year growth breakdown table and use the Rule of 72 to estimate doubling time.</p>
+          </div>
+        </a>
+        <a href="finance/loan-calculator.html" class="tool-card" data-keywords="loan mortgage payment amortization auto car debt monthly payment EMI">
+          <span class="card-icon">🏠</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.loan">Loan Calculator</h3>
+            <p data-i18n="home.card.loan.desc">Calculate monthly payments for mortgages, auto loans, and personal loans. See exactly how much interest you'll pay over the full term. Compare 15-year vs 30-year mortgage options and check the 28/36 rule for housing affordability.</p>
+          </div>
+        </a>
+        <a href="finance/roi-calculator.html" class="tool-card" data-keywords="ROI return on investment CAGR annualized growth rate stock profit">
+          <span class="card-icon">📊</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.roi">ROI Calculator</h3>
+            <p data-i18n="home.card.roi.desc">Calculate your total return on investment and annualized CAGR. Compare your performance against market benchmarks like the S&P 500. Works for stocks, funds, real estate, or any investment with a clear starting and ending value.</p>
+          </div>
+        </a>
+        <a href="finance/tip-calculator.html" class="tool-card" data-keywords="tip calculator restaurant gratuity bill split check dining">
+          <span class="card-icon">💵</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.tip">Tip Calculator</h3>
+            <p data-i18n="home.card.tip.desc">Calculate tips and split the check easily. Choose from 10%, 15%, 18%, 20%, or 25% tip rates. See how much each person owes including tip.</p>
+          </div>
+        </a>
+        <a href="finance/credit-card-payoff.html" class="tool-card" data-keywords="credit card payoff debt payment interest APR balance snowball">
+          <span class="card-icon">💳</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.cc">Credit Card Payoff Calculator</h3>
+            <p data-i18n="home.card.cc.desc">Find out how many months to pay off your credit card debt. See exactly how much interest you'll pay and how extra payments can save you hundreds or even thousands of dollars.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ========== Health ========== -->
+    <section class="section" id="health">
+      <h2 class="section-title"><span class="icon">❤️</span> <span data-i18n="home.section.health">Health Calculators</span></h2>
+      <div class="tools-grid">
+        <a href="health/bmi-calculator.html" class="tool-card" data-keywords="BMI body mass index weight height obesity healthy weight fat">
+          <span class="card-icon">⚖️</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.bmi">BMI Calculator</h3>
+            <p data-i18n="home.card.bmi.desc">Calculate your Body Mass Index instantly. Supports both metric (cm/kg) and imperial (ft+in/lbs) units. Get your BMI category based on WHO standards, plus your healthy weight range. Includes waist-to-height ratio recommendations.</p>
+          </div>
+        </a>
+        <a href="health/calorie-calculator.html" class="tool-card" data-keywords="calorie TDEE daily energy expenditure weight loss gain diet BMR macros">
+          <span class="card-icon">🔥</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.calorie">TDEE Calorie Calculator</h3>
+            <p data-i18n="home.card.calorie.desc">Find your Total Daily Energy Expenditure using the Mifflin-St Jeor formula. Get personalized calorie targets for weight loss (500 kcal deficit), maintenance, or muscle gain (300 kcal surplus). Based on your age, sex, height, weight, and activity level.</p>
+          </div>
+        </a>
+        <a href="health/ideal-weight.html" class="tool-card" data-keywords="ideal weight healthy how much should I weigh body IBW formula">
+          <span class="card-icon">🎯</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.iw">Ideal Weight Calculator</h3>
+            <p data-i18n="home.card.iw.desc">Find your ideal body weight using 4 medical formulas: Devine, Robinson, Miller, and Hamwi. Based on your height, age, and gender. Results in both kg and lbs.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ========== Math & Date ========== -->
+    <section class="section" id="math">
+      <h2 class="section-title"><span class="icon">📐</span> <span data-i18n="home.section.math">Math &amp; Date Tools</span></h2>
+      <div class="tools-grid">
+        <a href="math/percentage-calculator.html" class="tool-card" data-keywords="percentage percent ratio increase decrease discount tip off proportion">
+          <span class="card-icon">💯</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.pct">Percentage Calculator</h3>
+            <p data-i18n="home.card.pct.desc">Four percentage calculators in one: find X% of a number, calculate what percent X is of Y, measure percentage increase/decrease, and compute sale discounts. Includes common percentage formulas with step-by-step examples.</p>
+          </div>
+        </a>
+        <a href="math/age-calculator.html" class="tool-card" data-keywords="age birthday date difference days between dates years months weeks">
+          <span class="card-icon">🎂</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.age">Age &amp; Date Calculator</h3>
+            <p data-i18n="home.card.age.desc">Calculate your exact age in years, months, and days from your date of birth. Also find the number of days, weeks, months, and years between any two dates. Shows countdown to your next birthday and total days lived.</p>
+          </div>
+        </a>
+        <a href="math/random-number.html" class="tool-card" data-keywords="random number generator RNG lottery dice roll picker">
+          <span class="card-icon">🎲</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.rng">Random Number Generator</h3>
+            <p data-i18n="home.card.rng.desc">Generate one or many random integers within any range you set. Perfect for contests, lottery numbers, dice rolls, game mechanics, and statistical sampling.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ========== Converters ========== -->
+    <section class="section" id="converters">
+      <h2 class="section-title"><span class="icon">🔄</span> <span data-i18n="home.section.converters">Unit Converters</span></h2>
+      <div class="tools-grid">
+        <a href="converters/unit-converter.html" class="tool-card" data-keywords="unit converter length weight temperature area volume speed metric imperial conversion">
+          <span class="card-icon">📏</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.unit">All-in-One Unit Converter</h3>
+            <p data-i18n="home.card.unit.desc">Convert between metric, imperial, and other units across 6 categories: length, weight, temperature, area, volume, and speed. Covers miles to km, pounds to kg, Fahrenheit to Celsius, acres to hectares, and more. Results update instantly as you type.</p>
+          </div>
+        </a>
+        <a href="converters/data-storage.html" class="tool-card" data-keywords="data storage converter KB MB GB TB byte file size digital">
+          <span class="card-icon">💾</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.ds">Data Storage Converter</h3>
+            <p data-i18n="home.card.ds.desc">Convert between bytes, KB, MB, GB, and TB instantly. Supports both SI decimal units and IEC binary units (KiB, MiB, GiB) for accurate tech calculations.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ========== Text Tools ========== -->
+    <section class="section" id="text">
+      <h2 class="section-title"><span class="icon">📝</span> Text Tools</h2>
+      <div class="tools-grid">
+        <a href="text-tools/word-counter.html" class="tool-card" data-keywords="word counter character count letter text paragraph sentence reading time">
+          <span class="card-icon">📄</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.wc">Word Counter</h3>
+            <p data-i18n="home.card.wc.desc">Real-time word and character counter. Count words, characters (with and without spaces), sentences, and paragraphs. Also estimates reading time for your text.</p>
+          </div>
+        </a>
+        <a href="text-tools/password-generator.html" class="tool-card" data-keywords="password generator strong random secure online safe cryptography">
+          <span class="card-icon">🔐</span>
+          <div class="card-body">
+            <h3 data-i18n="home.card.pw">Password Generator</h3>
+            <p data-i18n="home.card.pw.desc">Create cryptographically strong random passwords instantly. Customize length (4-128 chars) and character types. Uses crypto.getRandomValues — 100% secure, generated locally in your browser.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <div class="no-results hidden" id="noResults">
+      <p data-i18n="search.no_results">😕 No tools found. Try a different keyword?</p>
+    </div>
+
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p data-i18n="site.footer">🛠️ Free Online Calculators — All computations run locally in your browser. We never collect your data.</p>
+    <p style="margin-top:8px;">
+      <a href="sitemap.xml">Sitemap</a>
+    </p>
+  </footer>
+
+  <script>
+    function filterTools() {
+      var query = document.getElementById('searchInput').value.toLowerCase().trim();
+      var cards = document.querySelectorAll('.tool-card');
+      var sections = document.querySelectorAll('.section');
+      var anyVisible = false;
+
+      cards.forEach(function(card) {
+        // Include ALL language keywords in search
+        var keywords = '';
+        ['en','zh','es','de','fr'].forEach(function(l) {
+          if (I18N[l] && I18N[l][card.getAttribute('data-i18n') + '.desc']) {
+            keywords += ' ' + I18N[l][card.getAttribute('data-i18n') + '.desc'];
+          }
+        });
+        keywords += ' ' + (card.getAttribute('data-keywords') || '');
+        var text = (card.textContent + ' ' + keywords).toLowerCase();
+        if (!query || text.indexOf(query) !== -1) {
+          card.classList.remove('hidden');
+          anyVisible = true;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      sections.forEach(function(section) {
+        var visibleCards = section.querySelectorAll('.tool-card:not(.hidden)');
+        section.style.display = (query && visibleCards.length === 0) ? 'none' : '';
+      });
+
+      var noResults = document.getElementById('noResults');
+      noResults.classList.toggle('hidden', !(!anyVisible && query));
+    }
+
+    // Init i18n
+    document.getElementById('langSelect').value = LANG;
+    applyI18n();
+
+    // ---- Nav active state + section highlight ----
+    var navLinks = document.querySelectorAll('#siteNav a');
+    var allSections = [];
+    document.querySelectorAll('.section').forEach(function(s) { allSections.push(s); });
+
+    function setActive(id) {
+      // Update nav
+      navLinks.forEach(function(l) {
+        l.classList.remove('active');
+        if (l.getAttribute('href') === '#' + id) l.classList.add('active');
+      });
+      // Update section backgrounds — highlight active, dim others
+      allSections.forEach(function(s) {
+        if (s.id === id) {
+          s.classList.add('active-section');
+        } else {
+          s.classList.remove('active-section');
+        }
+      });
+    }
+
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        var id = this.getAttribute('href').replace('#', '');
+        setActive(id);
+      });
+    });
+
+    // Update active on scroll
+    (function() {
+      var sectionTops = [];
+      allSections.forEach(function(s) {
+        sectionTops.push({ id: s.id, top: s.offsetTop });
+      });
+
+      function updateNav() {
+        var scrollY = window.scrollY + 120;
+        var current = sectionTops[0] ? sectionTops[0].id : 'home';
+        sectionTops.forEach(function(st) {
+          if (st.top <= scrollY) current = st.id;
+        });
+        setActive(current);
+      }
+
+      window.addEventListener('scroll', function() {
+        if (this._scrollTimer) clearTimeout(this._scrollTimer);
+        this._scrollTimer = setTimeout(updateNav, 80);
+      });
+    })();
+  </script>
+
+<script src="js/tracker.js"></script>
+</body>
+</html>

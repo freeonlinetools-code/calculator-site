@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All-in-One Unit Converter - Length, Weight, Temperature, Area & More</title>
+  <meta name="description" content="Free all-in-one unit converter: convert length (miles to km, inches to cm), weight (pounds to kg), temperature (F to C), area, volume, and speed. Metric, imperial & more.">
+  <meta name="keywords" content="unit converter, length converter, weight converter, temperature converter, metric to imperial, miles to km, pounds to kg, Fahrenheit to Celsius, area converter">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/i18n.js?v=3"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "All-in-One Unit Converter",
+    "url": "https://freeonlinetools-code.github.io/calculator-site/converters/unit-converter.html",
+    "description": "Free online unit converter supporting length, weight, temperature, area, volume, and speed.",
+    "applicationCategory": "UtilityApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="site-logo"><span class="logo-icon">🛠️</span> Free Online Calculators</a>
+      <nav class="site-nav">
+        <a href="../index.html" data-i18n="nav.home">Home</a>
+        <a href="../index.html#finance" data-i18n="nav.finance">Finance</a>
+        <a href="../index.html#health" data-i18n="nav.health">Health</a>
+        <a href="../index.html#math" data-i18n="nav.math">Math</a>
+        <a href="../index.html#converters" class="active" data-i18n="nav.convert">Convert</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option>
+          <option value="zh">简体中文</option>
+          <option value="es">Español</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> <span>›</span> <a href="../index.html#converters">Converters</a> <span>›</span> Unit Converter
+    </div>
+
+    <h1 data-i18n="unit.title">📏 All-in-One Unit Converter</h1>
+    <p class="intro" data-i18n="unit.intro">Convert between metric, imperial, and other units across 6 categories: length, weight, temperature, area, volume, and speed. Instant results as you type.</p>
+
+    <div class="calc-card">
+      <div class="input-row">
+        <div class="input-group">
+          <label for="category">Category</label>
+          <select id="category" onchange="switchCategory()">
+            <option value="length">📏 Length</option>
+            <option value="weight">⚖️ Weight</option>
+            <option value="temperature">🌡️ Temperature</option>
+            <option value="area">📐 Area</option>
+            <option value="volume">🧪 Volume</option>
+            <option value="speed">🚀 Speed</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="inputValue">Value</label>
+          <input type="number" id="inputValue" value="1" step="any" oninput="convert()">
+        </div>
+        <div class="input-group">
+          <label for="fromUnit">From</label>
+          <select id="fromUnit" onchange="convert()"></select>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:1.5rem;padding:8px;">⇅</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="toUnit">To</label>
+          <select id="toUnit" onchange="convert()"></select>
+        </div>
+        <div class="input-group">
+          <label for="outputValue">Result</label>
+          <input type="text" id="outputValue" readonly style="background:#f0fdf4;font-weight:700;font-size:1.1rem;">
+        </div>
+      </div>
+      <button class="btn-calc" onclick="swapUnits()" data-i18n="btn.swap">🔄 Swap</button>
+    </div>
+
+    <div class="content-section">
+      <h2>📖 Common Conversions Reference</h2>
+
+      <h3>📏 Length</h3>
+      <ul>
+        <li>1 inch = 2.54 cm &ensp;|&ensp; 1 foot = 30.48 cm = 12 inches</li>
+        <li>1 yard = 0.9144 m &ensp;|&ensp; 1 mile = 1.609 km</li>
+        <li>1 meter = 3.281 feet &ensp;|&ensp; 1 km = 0.6214 miles</li>
+      </ul>
+
+      <h3>⚖️ Weight</h3>
+      <ul>
+        <li>1 pound (lb) = 0.4536 kg &ensp;|&ensp; 1 ounce = 28.35 g</li>
+        <li>1 kg = 2.205 lbs &ensp;|&ensp; 1 stone = 14 lbs = 6.35 kg</li>
+        <li>1 ton (US) = 2,000 lbs = 907.2 kg</li>
+      </ul>
+
+      <h3>🌡️ Temperature</h3>
+      <div class="formula">°F = °C × 9/5 + 32</div>
+      <div class="formula">K = °C + 273.15</div>
+      <ul>
+        <li>Water freezes: 0°C = 32°F = 273.15 K</li>
+        <li>Water boils: 100°C = 212°F = 373.15 K</li>
+        <li>Body temperature: 37°C = 98.6°F</li>
+      </ul>
+
+      <h3>📐 Area</h3>
+      <ul>
+        <li>1 acre = 43,560 sq ft = 4,047 m²</li>
+        <li>1 hectare = 10,000 m² = 2.471 acres</li>
+        <li>1 sq mile = 640 acres = 2.59 km²</li>
+      </ul>
+
+      <h3>🧪 Volume</h3>
+      <ul>
+        <li>1 US gallon = 3.785 liters &ensp;|&ensp; 1 liter = 0.264 gallons</li>
+        <li>1 cup = 8 fl oz = 237 mL</li>
+        <li>1 cubic meter = 1,000 liters</li>
+      </ul>
+
+      <h3>🚀 Speed</h3>
+      <ul>
+        <li>1 mph = 1.609 km/h &ensp;|&ensp; 1 km/h = 0.621 mph</li>
+        <li>1 m/s = 3.6 km/h = 2.237 mph</li>
+        <li>1 knot = 1.852 km/h = 1.151 mph</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2>🔗 Related Tools</h2>
+      <div class="related-tools">
+        <a href="../math/percentage-calculator.html">💯 Percentage Calculator</a>
+        <a href="../math/age-calculator.html">🎂 Age Calculator</a>
+        <a href="../finance/compound-interest.html">📈 Compound Interest Calculator</a>
+        <a href="../health/bmi-calculator.html">⚖️ BMI Calculator</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p>🛠️ Free Online Calculators — All computations run locally in your browser.</p>
+  </footer>
+
+  <script>
+    var config = {
+      length: {
+        units: {
+          'meter':{name:'Meter (m)',factor:1},'kilometer':{name:'Kilometer (km)',factor:1000},
+          'centimeter':{name:'Centimeter (cm)',factor:0.01},'millimeter':{name:'Millimeter (mm)',factor:0.001},
+          'mile':{name:'Mile (mi)',factor:1609.344},'yard':{name:'Yard (yd)',factor:0.9144},
+          'foot':{name:'Foot (ft)',factor:0.3048},'inch':{name:'Inch (in)',factor:0.0254}
+        }
+      },
+      weight: {
+        units: {
+          'kilogram':{name:'Kilogram (kg)',factor:1},'gram':{name:'Gram (g)',factor:0.001},
+          'milligram':{name:'Milligram (mg)',factor:0.000001},'ton':{name:'Metric Ton (t)',factor:1000},
+          'pound':{name:'Pound (lb)',factor:0.453592},'ounce':{name:'Ounce (oz)',factor:0.0283495},
+          'stone':{name:'Stone (st)',factor:6.35029},'uston':{name:'US Ton',factor:907.18474}
+        }
+      },
+      temperature: {
+        units: {'celsius':{name:'Celsius (°C)'},'fahrenheit':{name:'Fahrenheit (°F)'},'kelvin':{name:'Kelvin (K)'}},
+        special: true
+      },
+      area: {
+        units: {
+          'sqmeter':{name:'Square Meter (m²)',factor:1},'sqkilometer':{name:'Square Kilometer (km²)',factor:1e6},
+          'sqfoot':{name:'Square Foot (ft²)',factor:0.092903},'sqmile':{name:'Square Mile (mi²)',factor:2589988},
+          'acre':{name:'Acre',factor:4046.856},'hectare':{name:'Hectare (ha)',factor:10000}
+        }
+      },
+      volume: {
+        units: {
+          'liter':{name:'Liter (L)',factor:1},'milliliter':{name:'Milliliter (mL)',factor:0.001},
+          'cubicmeter':{name:'Cubic Meter (m³)',factor:1000},'gallon':{name:'US Gallon (gal)',factor:3.78541},
+          'quart':{name:'Quart (qt)',factor:0.946353},'pint':{name:'Pint (pt)',factor:0.473176},
+          'cup':{name:'Cup',factor:0.236588},'floz':{name:'Fluid Ounce (fl oz)',factor:0.0295735}
+        }
+      },
+      speed: {
+        units: {
+          'kmh':{name:'km/h',factor:1},'ms':{name:'m/s',factor:3.6},
+          'mph':{name:'mph',factor:1.60934},'knot':{name:'Knot (kn)',factor:1.852}
+        }
+      }
+    };
+
+    var curCat = 'length';
+
+    function buildOpts(units, sel) {
+      var h = '';
+      for (var k in units) { h += '<option value="' + k + '"' + (k === sel ? ' selected' : '') + '>' + units[k].name + '</option>'; }
+      return h;
+    }
+
+    function switchCategory() {
+      curCat = document.getElementById('category').value;
+      var c = config[curCat];
+      var keys = Object.keys(c.units);
+      document.getElementById('fromUnit').innerHTML = buildOpts(c.units, keys[0]);
+      document.getElementById('toUnit').innerHTML = buildOpts(c.units, keys[Math.min(1, keys.length - 1)]);
+      convert();
+    }
+
+    function convert() {
+      var v = parseFloat(document.getElementById('inputValue').value);
+      if (isNaN(v)) { document.getElementById('outputValue').value = ''; return; }
+      var c = config[curCat];
+      var fk = document.getElementById('fromUnit').value;
+      var tk = document.getElementById('toUnit').value;
+      var result;
+
+      if (c.special && curCat === 'temperature') {
+        var celsius;
+        if (fk === 'celsius') celsius = v;
+        else if (fk === 'fahrenheit') celsius = (v - 32) * 5 / 9;
+        else if (fk === 'kelvin') celsius = v - 273.15;
+        if (tk === 'celsius') result = celsius;
+        else if (tk === 'fahrenheit') result = celsius * 9 / 5 + 32;
+        else if (tk === 'kelvin') result = celsius + 273.15;
+      } else {
+        result = (v * c.units[fk].factor) / c.units[tk].factor;
+      }
+
+      if (Math.abs(result) < 1e-9) document.getElementById('outputValue').value = '0';
+      else if (Math.abs(result) >= 1e6 || Math.abs(result) < 0.001) document.getElementById('outputValue').value = result.toExponential(6);
+      else document.getElementById('outputValue').value = parseFloat(result.toPrecision(10));
+    }
+
+    function swapUnits() {
+      var fs = document.getElementById('fromUnit');
+      var ts = document.getElementById('toUnit');
+      var tmp = fs.value;
+      fs.value = ts.value;
+      ts.value = tmp;
+      convert();
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      switchCategory();
+      initI18n();
+    });
+    function initI18n() {
+      document.getElementById('langSelect').value = LANG;
+      applyI18n(); calculate();
+    }
+  </script>
+  <script>window.switchLang=function(lang){LANG=lang;document.documentElement.lang=lang==="zh"?"zh-CN":lang;localStorage.setItem("calc_site_lang",lang);applyI18n();if(typeof calculate==="function")calculate();if(typeof convert==="function")convert();if(typeof switchCategory==="function")switchCategory();};</script>
+<script src="../js/tracker.js"></script>
+</body>
+</html>

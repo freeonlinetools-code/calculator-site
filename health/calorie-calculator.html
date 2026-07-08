@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TDEE Calorie Calculator - Free Daily Energy Expenditure & Weight Goals</title>
+  <meta name="description" content="Free TDEE calorie calculator: calculate your Total Daily Energy Expenditure. Get personalized calorie targets for weight loss, maintenance, and muscle gain using the Mifflin-St Jeor formula.">
+  <meta name="keywords" content="TDEE calculator, calorie calculator, daily calorie needs, BMR calculator, weight loss calories, maintenance calories, bulking calories">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/i18n.js?v=3"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "TDEE Calorie Calculator",
+    "url": "https://freeonlinetools-code.github.io/calculator-site/health/calorie-calculator.html",
+    "description": "Free TDEE calculator — find your daily calorie needs for weight loss, maintenance, or muscle gain.",
+    "applicationCategory": "HealthApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="site-logo"><span class="logo-icon">🛠️</span> Free Online Calculators</a>
+      <nav class="site-nav">
+        <a href="../index.html" data-i18n="nav.home">Home</a>
+        <a href="../index.html#finance" data-i18n="nav.finance">Finance</a>
+        <a href="../index.html#health" class="active" data-i18n="nav.health">Health</a>
+        <a href="../index.html#math" data-i18n="nav.math">Math</a>
+        <a href="../index.html#converters" data-i18n="nav.convert">Convert</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option>
+          <option value="zh">简体中文</option>
+          <option value="es">Español</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> <span>›</span> <a href="../index.html#health">Health Calculators</a> <span>›</span> TDEE Calculator
+    </div>
+
+    <h1 data-i18n="cal.title">🔥 TDEE Calorie Calculator</h1>
+    <p class="intro" data-i18n="cal.intro">Calculate your Total Daily Energy Expenditure (TDEE) — the total calories you burn each day. Get personalized calorie targets for weight loss, maintenance, or muscle gain.</p>
+
+    <div class="calc-card">
+      <div class="input-row">
+        <div class="input-group">
+          <label for="gender">Sex</label>
+          <select id="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" value="30" min="15" max="100">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="height">Height (cm)</label>
+          <input type="number" id="height" value="175" min="100" max="250">
+        </div>
+        <div class="input-group">
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" value="75" min="30" max="300">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="activity">Activity Level</label>
+          <select id="activity">
+            <option value="1.2">Sedentary — little or no exercise, desk job</option>
+            <option value="1.375" selected>Lightly Active — exercise 1–3 days/week</option>
+            <option value="1.55">Moderately Active — exercise 3–5 days/week</option>
+            <option value="1.725">Very Active — exercise 6–7 days/week</option>
+            <option value="1.9">Extremely Active — physical job + daily training</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calculate()">🔥 <span data-i18n="btn.calculate">Calculate</span></button>
+      <button class="btn-reset" onclick="resetForm()" data-i18n="btn.reset">Reset</button>
+
+      <div class="result-box" id="resultBox">
+        <div class="result-amount" id="resultAmount"></div>
+        <div class="result-detail" id="resultDetail"></div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>📖 Understanding TDEE, BMR, and Calorie Targets</h2>
+
+      <h3>BMR (Basal Metabolic Rate)</h3>
+      <p>Your BMR is the calories your body burns at complete rest — just to keep you alive (breathing, circulation, cell production). This calculator uses the <strong>Mifflin-St Jeor equation</strong>, the most accurate BMR formula for the general population.</p>
+
+      <h3>TDEE (Total Daily Energy Expenditure)</h3>
+      <div class="formula">TDEE = BMR × Activity Multiplier</div>
+      <p>TDEE is your total daily calorie burn including exercise and daily activity. This is how many calories you need to <strong>maintain</strong> your current weight.</p>
+
+      <h3>🎯 Set Your Calorie Target</h3>
+      <table class="result-table">
+        <thead><tr><th>Goal</th><th>Daily Calories</th><th>Expected Result</th></tr></thead>
+        <tbody>
+          <tr style="background:#fef2f2;"><td>Weight Loss</td><td>TDEE − 500 kcal</td><td>~1 lb / week loss</td></tr>
+          <tr style="background:#f0fdf4;"><td>Maintenance</td><td>TDEE</td><td>Stable weight</td></tr>
+          <tr style="background:#eff6ff;"><td>Muscle Gain</td><td>TDEE + 300 kcal</td><td>~0.5 lb / week gain</td></tr>
+        </tbody>
+      </table>
+      <div class="note note-warning" style="margin-top:12px;">
+        ⚠️ Never go below <strong>1,200 kcal/day</strong> (women) or <strong>1,500 kcal/day</strong> (men) without medical supervision. Extreme restriction can cause metabolic slowdown and nutrient deficiencies.
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>❓ FAQ</h2>
+      <div class="faq-item">
+        <h4>Why am I not losing weight even in a deficit?</h4>
+        <p>Common reasons: 1) Underestimating calorie intake (tracking errors); 2) Overestimating exercise calories burned; 3) Water retention masking fat loss; 4) Metabolic adaptation from prolonged dieting. Try tracking everything for 2 weeks before adjusting.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How accurate is the Mifflin-St Jeor formula?</h4>
+        <p>It's considered the most accurate BMR equation for most people, with error margins of ~10%. Individual variation exists, so use the result as a starting point and adjust based on real-world weight changes.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How should I split my macros?</h4>
+        <p>A balanced approach: <strong>Protein 25-35%</strong>, <strong>Carbs 40-55%</strong>, <strong>Fats 20-30%</strong>. For muscle gain, increase protein to ~0.8-1g per pound of body weight. For weight loss, higher protein helps preserve muscle and increases satiety.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Can I lose weight without exercise?</h4>
+        <p>Yes. Weight loss is primarily driven by calorie deficit, and diet is the biggest lever. However, exercise helps preserve muscle mass, improves metabolic health, and makes long-term maintenance easier.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>🔗 Related Tools</h2>
+      <div class="related-tools">
+        <a href="bmi-calculator.html">⚖️ BMI Calculator</a>
+        <a href="../finance/compound-interest.html">📈 Compound Interest Calculator</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p>🛠️ Free Online Calculators — All computations run locally in your browser.</p>
+    <p style="margin-top:8px;color:#94a3b8;">⚠️ For informational purposes only. Consult a registered dietitian or doctor for personalized advice.</p>
+  </footer>
+
+  <script>
+    function calculate() {
+      var gender = document.getElementById('gender').value;
+      var age = parseInt(document.getElementById('age').value) || 0;
+      var height = parseFloat(document.getElementById('height').value) || 0;
+      var weight = parseFloat(document.getElementById('weight').value) || 0;
+      var activity = parseFloat(document.getElementById('activity').value) || 0;
+
+      if (age < 15 || age > 100 || height < 100 || height > 250 || weight < 30 || weight > 300) {
+        alert('Please enter reasonable values.');
+        return;
+      }
+
+      var bmr;
+      if (gender === 'male') {
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+      } else {
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+      }
+
+      var tdee = bmr * activity;
+      var lose = tdee - 500;
+      var gain = tdee + 300;
+
+      document.getElementById('resultAmount').textContent =
+        '📊 BMR: ' + Math.round(bmr) + ' kcal/day &ensp;|&ensp; TDEE: ' + Math.round(tdee) + ' kcal/day';
+
+      document.getElementById('resultDetail').innerHTML =
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px;">' +
+        '<div style="background:#fef2f2;padding:14px;border-radius:8px;">' +
+        '  <div style="font-size:0.8rem;color:#dc2626;">📉 Weight Loss</div>' +
+        '  <div style="font-size:1.4rem;font-weight:800;color:#dc2626;">' + Math.round(lose) + '</div>' +
+        '  <div style="font-size:0.75rem;color:#64748b;">kcal/day (-500 deficit)</div>' +
+        '</div>' +
+        '<div style="background:#f0fdf4;padding:14px;border-radius:8px;">' +
+        '  <div style="font-size:0.8rem;color:#16a34a;">⚖️ Maintenance</div>' +
+        '  <div style="font-size:1.4rem;font-weight:800;color:#16a34a;">' + Math.round(tdee) + '</div>' +
+        '  <div style="font-size:0.75rem;color:#64748b;">kcal/day (TDEE)</div>' +
+        '</div>' +
+        '<div style="background:#eff6ff;padding:14px;border-radius:8px;">' +
+        '  <div style="font-size:0.8rem;color:#2563eb;">💪 Muscle Gain</div>' +
+        '  <div style="font-size:1.4rem;font-weight:800;color:#2563eb;">' + Math.round(gain) + '</div>' +
+        '  <div style="font-size:0.75rem;color:#64748b;">kcal/day (+300 surplus)</div>' +
+        '</div></div>';
+
+      document.getElementById('resultBox').classList.add('show');
+    }
+
+    function resetForm() {
+      document.getElementById('gender').value = 'male';
+      document.getElementById('age').value = '30';
+      document.getElementById('height').value = '175';
+      document.getElementById('weight').value = '75';
+      document.getElementById('activity').value = '1.375';
+      document.getElementById('resultBox').classList.remove('show');
+    }
+
+    window.addEventListener('DOMContentLoaded', function() { calculate(); initI18n(); });
+    function initI18n() {
+      document.getElementById('langSelect').value = LANG;
+      applyI18n(); calculate();
+    }
+  </script>
+  <script>window.switchLang=function(lang){LANG=lang;document.documentElement.lang=lang==="zh"?"zh-CN":lang;localStorage.setItem("calc_site_lang",lang);applyI18n();if(typeof calculate==="function")calculate();if(typeof convert==="function")convert();if(typeof switchCategory==="function")switchCategory();};</script>
+<script src="../js/tracker.js"></script>
+</body>
+</html>

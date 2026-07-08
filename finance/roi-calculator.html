@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROI Calculator - Free Return on Investment & CAGR Calculator</title>
+  <meta name="description" content="Free ROI calculator: calculate total return, annualized CAGR, and benchmark your investment performance against the S&P 500. Evaluate stocks, funds, and real estate.">
+  <meta name="keywords" content="ROI calculator, return on investment, CAGR calculator, annualized return, investment return, stock return calculator, growth rate">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/i18n.js?v=3"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ROI Calculator",
+    "url": "https://freeonlinetools-code.github.io/calculator-site/finance/roi-calculator.html",
+    "description": "Free online ROI and CAGR calculator for evaluating investment performance.",
+    "applicationCategory": "FinanceApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="site-logo"><span class="logo-icon">🛠️</span> Free Online Calculators</a>
+      <nav class="site-nav">
+        <a href="../index.html" data-i18n="nav.home">Home</a>
+        <a href="../index.html#finance" class="active" data-i18n="nav.finance">Finance</a>
+        <a href="../index.html#health" data-i18n="nav.health">Health</a>
+        <a href="../index.html#math" data-i18n="nav.math">Math</a>
+        <a href="../index.html#converters" data-i18n="nav.convert">Convert</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option>
+          <option value="zh">简体中文</option>
+          <option value="es">Español</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> <span>›</span> <a href="../index.html#finance">Financial Calculators</a> <span>›</span> ROI Calculator
+    </div>
+
+    <h1 data-i18n="roi.title">📊 ROI &amp; CAGR Calculator</h1>
+    <p class="intro" data-i18n="roi.intro">Calculate your total return on investment (ROI) and compound annual growth rate (CAGR).</p>
+
+    <div class="calc-card">
+      <div class="input-row">
+        <div class="input-group">
+          <label for="initial">Initial Investment ($)</label>
+          <input type="number" id="initial" value="50000" min="1" step="100">
+        </div>
+        <div class="input-group">
+          <label for="final">Final Value / Current Market Value ($)</label>
+          <input type="number" id="final" value="120000" min="0" step="100">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="years" data-i18n="roi.input.years">Holding Period (years)</label>
+          <input type="number" id="years" value="5" min="0.1" step="0.1" placeholder="e.g. 3.5 years">
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calculate()">📈 <span data-i18n="btn.calculate">Calculate</span></button>
+      <button class="btn-reset" onclick="resetForm()" data-i18n="btn.reset">Reset</button>
+
+      <div class="result-box" id="resultBox">
+        <div class="result-amount" id="resultAmount"></div>
+        <div class="result-detail" id="resultDetail"></div>
+        <div class="result-detail" id="resultBenchmark" style="margin-top:8px;padding:10px;background:#eff6ff;border-radius:6px;"></div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>📖 ROI vs CAGR: What's the Difference?</h2>
+      <p><strong>ROI (Return on Investment)</strong> is your total return — how much you gained or lost in total, expressed as a percentage.</p>
+      <p><strong>CAGR (Compound Annual Growth Rate)</strong> is your annualized return — it smooths out the total return into a yearly rate, making it easy to compare investments of different durations.</p>
+
+      <div class="note note-info">
+        💡 <strong>CAGR is the more important number.</strong> Earning 50% over 3 years (CAGR ~14.5%) is much better than earning 50% over 10 years (CAGR ~4.1%).
+      </div>
+
+      <h3>📐 The Formulas</h3>
+      <div class="formula">ROI (%) = (Final Value − Initial Investment) / Initial Investment × 100</div>
+      <br>
+      <div class="formula">CAGR (%) = [(Final Value / Initial Investment)<sup>1/years</sup> − 1] × 100</div>
+
+      <h3>📝 Example</h3>
+      <p>You invested <strong>$50,000</strong> in an S&P 500 index fund. After <strong>5 years</strong>, it's worth <strong>$120,000</strong>:</p>
+      <ul>
+        <li>Total ROI = ($120,000 − $50,000) / $50,000 × 100 = <strong>140%</strong></li>
+        <li>CAGR = ($120,000 / $50,000)<sup>1/5</sup> − 1 = 2.4<sup>0.2</sup> − 1 ≈ <strong>19.1%</strong> annually</li>
+      </ul>
+
+      <h3>📊 Common Benchmarks</h3>
+      <ul>
+        <li>High-yield savings account: ~<strong>4-5%</strong> (risk-free, nominal)</li>
+        <li>S&P 500 long-term average: ~<strong>10%</strong> annual (before inflation)</li>
+        <li>Warren Buffett (Berkshire Hathaway): ~<strong>20%</strong> annual over 50+ years</li>
+        <li>Typical real estate appreciation: ~<strong>3-5%</strong> annual</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2>❓ FAQ</h2>
+      <div class="faq-item">
+        <h4>Is a 10% annual return good?</h4>
+        <p>Yes. 10% annually matches the long-term S&P 500 average and doubles your money roughly every 7 years. Most professional fund managers don't beat this consistently.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Should I include dividends in the calculation?</h4>
+        <p>Yes. For a fair comparison, the final value should include reinvested dividends. If you received $2,000 in dividends and reinvested them, add that to the final value.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What if my ROI is negative?</h4>
+        <p>A negative ROI means you lost money. The calculator will show exactly how much. For long-term investing, temporary drawdowns are normal — the S&P 500 has had negative years about 27% of the time.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How do I compare two different investments?</h4>
+        <p>Use the CAGR for each investment. The one with the higher CAGR delivered better annualized returns. Always compare over the same time period.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>🔗 Related Tools</h2>
+      <div class="related-tools">
+        <a href="compound-interest.html">📈 Compound Interest Calculator</a>
+        <a href="loan-calculator.html">🏠 Loan Calculator</a>
+        <a href="../math/percentage-calculator.html">💯 Percentage Calculator</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p>🛠️ Free Online Calculators — All computations run locally in your browser. We never collect your data.</p>
+  </footer>
+
+  <script>
+    function calculate() {
+      var initial = parseFloat(document.getElementById('initial').value) || 0;
+      var finalVal = parseFloat(document.getElementById('final').value) || 0;
+      var years = parseFloat(document.getElementById('years').value) || 0;
+
+      if (initial <= 0 || finalVal < 0 || years <= 0) {
+        alert('Please enter valid positive numbers.');
+        return;
+      }
+
+      var roi = ((finalVal - initial) / initial) * 100;
+      var cagr = (Math.pow(finalVal / initial, 1 / years) - 1) * 100;
+      var profit = finalVal - initial;
+
+      var emoji = profit >= 0 ? '📈' : '📉';
+      var clr = profit >= 0 ? '#16a34a' : '#dc2626';
+      document.getElementById('resultAmount').innerHTML =
+        emoji + ' Total ROI: <span style="color:' + clr + ';">' + roi.toFixed(2) + '%</span>' +
+        ' &ensp;|&ensp; CAGR: <strong style="color:' + clr + ';">' + cagr.toFixed(2) + '%</strong> / year';
+
+      document.getElementById('resultDetail').innerHTML =
+        'From $' + fmt2(initial) + ' → $' + fmt2(finalVal) +
+        ' &ensp;|&ensp; ' + (profit >= 0 ? 'Profit' : 'Loss') + ': <strong style="color:' + clr + ';">' + (profit >= 0 ? '+' : '') + '$' + fmt2(Math.abs(profit)) + '</strong>';
+
+      var bench;
+      if (cagr > 20) bench = '🏆 Your CAGR <strong style="color:#16a34a;">beats Buffett\'s long-term record (~20%)</strong>!';
+      else if (cagr > 10) bench = '👍 Your return <strong style="color:#16a34a;">matches or beats the S&P 500 (~10%)</strong>.';
+      else if (cagr > 5) bench = '📊 Your return <strong>exceeds savings account rates</strong> but trails the stock market.';
+      else if (cagr > 0) bench = 'Your return is positive but <strong style="color:#f59e0b;">below typical investment benchmarks</strong>.';
+      else bench = '⚠️ Your investment is <strong style="color:#dc2626;">in negative territory</strong>.';
+      document.getElementById('resultBenchmark').innerHTML = bench;
+      document.getElementById('resultBox').classList.add('show');
+    }
+
+    function resetForm() {
+      document.getElementById('initial').value = '50000';
+      document.getElementById('final').value = '120000';
+      document.getElementById('years').value = '5';
+      document.getElementById('resultBox').classList.remove('show');
+    }
+
+    function fmt2(num) {
+      return Math.abs(num).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+
+    window.addEventListener('DOMContentLoaded', function() { calculate(); initI18n(); });
+    function initI18n() {
+      document.getElementById('langSelect').value = LANG;
+      applyI18n(); calculate();
+    }
+  </script>
+  <script>window.switchLang=function(lang){LANG=lang;document.documentElement.lang=lang==="zh"?"zh-CN":lang;localStorage.setItem("calc_site_lang",lang);applyI18n();if(typeof calculate==="function")calculate();if(typeof convert==="function")convert();if(typeof switchCategory==="function")switchCategory();};</script>
+<script src="../js/tracker.js"></script>
+</body>
+</html>

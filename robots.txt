@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://freeonlinetools-code.github.io/calculator-site/sitemap.xml

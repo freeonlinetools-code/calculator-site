@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理后台 — 流量统计分析</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f172a; --surface: #1e293b; --surface2: #334155;
+      --text: #f1f5f9; --text2: #94a3b8; --border: #334155;
+      --primary: #3b82f6; --green: #22c55e; --amber: #f59e0b; --red: #ef4444;
+      --radius: 10px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh;
+    }
+
+    /* ---- 登录遮罩 ---- */
+    .login-overlay {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .login-box {
+      background: var(--surface); padding: 40px; border-radius: 16px;
+      text-align: center; max-width: 380px; width: 90%;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+    .login-box h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    .login-box p { color: var(--text2); font-size: 0.9rem; margin-bottom: 24px; }
+    .login-box input {
+      width: 100%; padding: 12px 16px; font-size: 1rem;
+      border: 2px solid var(--border); border-radius: 8px;
+      background: var(--bg); color: var(--text); outline: none;
+      text-align: center; letter-spacing: 4px;
+    }
+    .login-box input:focus { border-color: var(--primary); }
+    .login-box .btn-login {
+      width: 100%; margin-top: 16px; padding: 12px; font-size: 1rem;
+      font-weight: 600; background: var(--primary); color: #fff;
+      border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s;
+    }
+    .login-box .btn-login:hover { background: #2563eb; }
+    .login-error { color: var(--red); font-size: 0.85rem; margin-top: 12px; display: none; }
+
+    /* ---- 布局 ---- */
+    .dashboard { display: none; }
+    .dashboard.active { display: block; }
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 14px 24px; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .topbar h2 { font-size: 1.1rem; font-weight: 700; }
+    .topbar .badge {
+      font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; font-weight: 600;
+    }
+    .badge-live { background: #064e3b; color: #6ee7b7; }
+    .badge-demo { background: #78350f; color: #fcd34d; }
+    .btn-logout {
+      background: var(--surface2); color: var(--text); border: 1px solid var(--border);
+      padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+    }
+    .btn-logout:hover { background: #475569; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+
+    /* ---- 统计卡片 ---- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .stat-card .label { font-size: 0.8rem; color: var(--text2); letter-spacing: 0.5px; }
+    .stat-card .value { font-size: 2rem; font-weight: 800; margin-top: 4px; }
+    .stat-card .sub { font-size: 0.78rem; color: var(--text2); margin-top: 4px; }
+    .stat-card.green .value { color: var(--green); }
+    .stat-card.blue .value { color: var(--primary); }
+    .stat-card.amber .value { color: var(--amber); }
+
+    /* ---- 图表区域 ---- */
+    .chart-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; margin-bottom: 28px;
+    }
+    .chart-card h3 { font-size: 1rem; margin-bottom: 16px; color: var(--text2); letter-spacing: 0.5px; }
+    .chart-wrap { position: relative; width: 100%; max-height: 320px; }
+    .chart-wrap canvas { width: 100% !important; }
+
+    /* ---- 表格 ---- */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .data-table th {
+      text-align: left; padding: 10px 14px; font-size: 0.75rem;
+      letter-spacing: 0.5px; color: var(--text2);
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 10px 14px; border-bottom: 1px solid rgba(51,65,85,0.4);
+    }
+    .data-table tr:hover td { background: rgba(59,130,246,0.05); }
+    .data-table .page-link { color: var(--primary); text-decoration: none; }
+    .data-table .page-link:hover { text-decoration: underline; }
+
+    /* ---- 双栏 ---- */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 28px;
+    }
+    @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+    /* ---- 状态栏 ---- */
+    .status-bar {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 20px; margin-bottom: 28px;
+      display: flex; align-items: center; gap: 12px; font-size: 0.85rem;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot.green { background: var(--green); }
+    .dot.amber { background: var(--amber); }
+
+    /* ---- 配置指南 ---- */
+    .setup-guide {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; margin-bottom: 28px;
+    }
+    .setup-guide h3 { margin-bottom: 12px; }
+    .setup-guide ol { margin-left: 20px; color: var(--text2); line-height: 2; }
+    .setup-guide code {
+      background: var(--bg); padding: 2px 8px; border-radius: 4px;
+      font-size: 0.85rem; color: var(--green);
+    }
+
+    .refresh-note { color: var(--text2); font-size: 0.78rem; margin-top: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<!-- ==================== 登录界面 ==================== -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h1>🔐 管理后台</h1>
+    <p>请输入密码以查看流量统计数据</p>
+    <input type="password" id="passwordInput" placeholder="请输入密码" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-login" onclick="login()">登 录</button>
+    <p class="login-error" id="loginError">密码错误，请重试</p>
+  </div>
+</div>
+
+<!-- ==================== 仪表盘 ==================== -->
+<div class="dashboard" id="dashboard">
+
+  <!-- 顶部导航 -->
+  <div class="topbar">
+    <h2>📊 流量统计分析</h2>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span class="badge badge-live" id="statusBadge" style="display:none;">● Supabase 已连接</span>
+      <span class="badge badge-demo" id="demoBadge">● 演示模式（本地存储）</span>
+      <button class="btn-logout" onclick="logout()">退出登录</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- 统计卡片 -->
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="label">📅 今日访问</div>
+        <div class="value" id="statToday">—</div>
+        <div class="sub" id="statTodaySub"></div>
+      </div>
+      <div class="stat-card blue">
+        <div class="label">📆 本月累计</div>
+        <div class="value" id="statMonth">—</div>
+        <div class="sub" id="statMonthSub"></div>
+      </div>
+      <div class="stat-card amber">
+        <div class="label">📈 历史总计</div>
+        <div class="value" id="statTotal">—</div>
+        <div class="sub">所有页面访问总量</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">📄 活跃页面</div>
+        <div class="value" id="statPages">—</div>
+        <div class="sub">至少有 1 次访问的页面</div>
+      </div>
+    </div>
+
+    <!-- 状态栏 -->
+    <div class="status-bar" id="statusBar">
+      <span class="dot amber" id="statusDot"></span>
+      <span id="statusText">正在从本地存储加载数据（演示模式）。配置 Supabase 后可追踪所有真实用户的访问。</span>
+    </div>
+
+    <!-- 配置指南 -->
+    <div class="setup-guide" id="setupGuide">
+      <h3>🚀 配置 Supabase 开启真实数据追踪（免费，5 分钟）</h3>
+      <p style="color:var(--text2);margin-bottom:12px;">
+        当前使用 <strong>浏览器本地存储</strong>——只能看到你自己浏览器的访问记录，不是真实流量。
+        配置 Supabase 后可以追踪<strong>所有用户的真实访问数据</strong>：
+      </p>
+      <ol>
+        <li>打开 <a href="https://supabase.com" target="_blank" style="color:var(--primary);">supabase.com</a> → 注册账号 → 创建免费项目</li>
+        <li>进入 <strong>SQL Editor</strong> → 新建查询 → 粘贴下方 SQL → 点击 Run</li>
+        <li>进入 <strong>Settings → API</strong> → 复制 <code>Project URL</code> 和 <code>anon public key</code></li>
+        <li>打开 <code>js/tracker.js</code> → 替换 <code>YOUR_PROJECT_ID</code> 和 <code>YOUR_SUPABASE_ANON_KEY</code></li>
+        <li>将 <code>USE_SUPABASE</code> 改为 <code>true</code></li>
+        <li>同时更新本文件的 <code>SUPABASE_URL</code> 和 <code>SUPABASE_ANON_KEY</code>，将 <code>SUPABASE_ENABLED</code> 改为 <code>true</code></li>
+        <li>刷新本页面 → 顶部角标变为绿色，即表示已连接真实数据</li>
+      </ol>
+      <div style="background:var(--bg);padding:16px;border-radius:8px;margin-top:12px;overflow-x:auto;">
+        <pre style="color:var(--green);font-size:0.8rem;white-space:pre-wrap;"><code>-- 在 Supabase SQL Editor 中执行以下 SQL：
+CREATE TABLE pageviews (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  page TEXT NOT NULL,
+  referrer TEXT DEFAULT 'direct',
+  screen_w INT,
+  screen_h INT,
+  lang TEXT,
+  timestamp TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 启用行级安全
+ALTER TABLE pageviews ENABLE ROW LEVEL SECURITY;
+
+-- 允许任何人写入（供追踪脚本使用）
+CREATE POLICY "allow_insert" ON pageviews
+  FOR INSERT WITH CHECK (true);
+
+-- 允许任何人读取（供管理后台使用）
+CREATE POLICY "allow_select" ON pageviews
+  FOR SELECT USING (true);</code></pre>
+      </div>
+    </div>
+
+    <!-- 月度柱状图 -->
+    <div class="chart-card">
+      <h3>📊 月度访问量（近 12 个月）</h3>
+      <div class="chart-wrap"><canvas id="monthlyChart"></canvas></div>
+    </div>
+
+    <!-- 双栏：每日明细 + 热门页面 -->
+    <div class="two-col">
+      <!-- 每日明细 -->
+      <div class="chart-card" style="margin-bottom:0;">
+        <h3>📅 本月每日明细</h3>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>日期</th><th>访问量</th></tr></thead>
+            <tbody id="dailyTableBody"><tr><td colspan="2" style="text-align:center;color:var(--text2);">加载中...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 热门页面 -->
+      <div class="chart-card" style="margin-bottom:0;">
+        <h3>🏆 热门页面排行</h3>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>页面</th><th>访问量</th></tr></thead>
+            <tbody id="topPagesBody"><tr><td colspan="2" style="text-align:center;color:var(--text2);">加载中...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <p class="refresh-note" id="refreshNote">数据随页面加载更新。刷新页面可获取最新数据。</p>
+
+  </div>
+</div>
+
+<script>
+// ==================== 密码设置 ====================
+// 存储的是密码的 SHA-256 哈希值，不是明文密码
+// 即使有人查看源码也看不到真实密码
+//
+// 修改密码的方法：
+//   1. 打开浏览器控制台（F12），粘贴以下代码并回车：
+//      crypto.subtle.digest('SHA-256', new TextEncoder().encode('你的新密码'))
+//        .then(h => console.log([...new Uint8Array(h)].map(b => b.toString(16).padStart(2,'0')).join('')));
+//   2. 把输出的 64 位字符串替换下面的 PASSWORD_HASH
+var PASSWORD_HASH = 'f1e686c0189abd7f7068a2fddf54981e570f0a376f2aaccca97388b90d2fa01f';
+
+// 使用 SHA-256 哈希比对，明文密码不出现
+async function hashPassword(pw) {
+  var encoder = new TextEncoder();
+  var data = encoder.encode(pw);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  var hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
+
+async function login() {
+  var pw = document.getElementById('passwordInput').value;
+  var hashed = await hashPassword(pw);
+  if (hashed === PASSWORD_HASH) {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('dashboard').classList.add('active');
+    loadDashboard();
+    sessionStorage.setItem('admin_authed', '1');
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('admin_authed');
+  document.getElementById('loginOverlay').style.display = 'flex';
+  document.getElementById('dashboard').classList.remove('active');
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
+
+// 当前会话已登录则跳过密码
+if (sessionStorage.getItem('admin_authed') === '1') {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('dashboard').classList.add('active');
+}
+
+// ==================== 数据加载 ====================
+var SUPABASE_URL = 'https://yttmofeanlciglsgqepe.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0dG1vZmVhbmxjaWdsc2dxZXBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NzczNjYsImV4cCI6MjA5OTA1MzM2Nn0.dMpn4m90F_8RGSwNulYlfNWlD4KcPvDaiu1qpaPltEY';
+var SUPABASE_ENABLED = true;  // 已启用 Supabase
+
+function loadDashboard() {
+  if (SUPABASE_ENABLED && SUPABASE_URL.indexOf('YOUR_PROJECT_ID') === -1) {
+    loadFromSupabase();
+  } else {
+    loadFromLocalStorage();
+  }
+}
+
+// ==================== 本地存储模式 ====================
+function loadFromLocalStorage() {
+  try {
+    var raw = localStorage.getItem('calc_site_pageviews') || '[]';
+    var data = JSON.parse(raw);
+  } catch (e) { var data = []; }
+
+  document.getElementById('statusDot').className = 'dot amber';
+  document.getElementById('statusText').textContent =
+    '演示模式——仅显示当前浏览器的访问记录。配置 Supabase 后可追踪所有真实用户的访问数据。';
+  document.getElementById('demoBadge').style.display = '';
+  document.getElementById('statusBadge').style.display = 'none';
+  document.getElementById('setupGuide').style.display = '';
+
+  renderDashboard(data);
+}
+
+// ==================== Supabase 模式 ====================
+function loadFromSupabase() {
+  document.getElementById('statusDot').className = 'dot green';
+  document.getElementById('statusText').textContent = 'Supabase 已连接——正在追踪所有用户的真实访问数据。';
+  document.getElementById('demoBadge').style.display = 'none';
+  document.getElementById('statusBadge').style.display = '';
+  document.getElementById('setupGuide').style.display = 'none';
+
+  fetch(SUPABASE_URL + '/rest/v1/pageviews?select=*&order=timestamp.desc&limit=5000', {
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+    }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(rows) {
+    var data = rows.map(function(r) { return {
+      page: r.page, referrer: r.referrer, screen_w: r.screen_w,
+      screen_h: r.screen_h, lang: r.lang, timestamp: r.timestamp
+    };});
+    renderDashboard(data);
+  })
+  .catch(function() {
+    document.getElementById('statusText').textContent =
+      '⚠️ 无法连接 Supabase，请检查 tracker.js 中的配置信息。';
+    document.getElementById('statusDot').className = 'dot amber';
+    loadFromLocalStorage();
+  });
+}
+
+// ==================== 渲染仪表盘 ====================
+var monthlyChartInstance = null;
+
+function renderDashboard(data) {
+  if (!data || data.length === 0) {
+    document.getElementById('statToday').textContent = '0';
+    document.getElementById('statMonth').textContent = '0';
+    document.getElementById('statTotal').textContent = '0';
+    document.getElementById('statPages').textContent = '0';
+    document.getElementById('dailyTableBody').innerHTML =
+      '<tr><td colspan="2" style="text-align:center;color:var(--text2);">暂无数据。浏览几个页面后即可看到统计。</td></tr>';
+    document.getElementById('topPagesBody').innerHTML =
+      '<tr><td colspan="2" style="text-align:center;color:var(--text2);">暂无数据</td></tr>';
+    return;
+  }
+
+  // 解析时间戳
+  data.forEach(function(d) {
+    d.ts = new Date(d.timestamp);
+    d.dateStr = d.ts.toISOString().split('T')[0];
+    d.monthStr = d.dateStr.substring(0, 7);
+  });
+
+  var now = new Date();
+  var todayStr = now.toISOString().split('T')[0];
+  var thisMonthStr = todayStr.substring(0, 7);
+
+  // ---- 统计卡片 ----
+  var todayCount = data.filter(function(d) { return d.dateStr === todayStr; }).length;
+  var yesterdayStr = new Date(now - 86400000).toISOString().split('T')[0];
+  var yesterdayCount = data.filter(function(d) { return d.dateStr === yesterdayStr; }).length;
+  var monthCount = data.filter(function(d) { return d.monthStr === thisMonthStr; }).length;
+  var totalCount = data.length;
+
+  // 活跃页面数
+  var pagesSet = {};
+  data.forEach(function(d) { pagesSet[d.page] = true; });
+  var uniquePages = Object.keys(pagesSet).length;
+
+  document.getElementById('statToday').textContent = todayCount.toLocaleString();
+  var todayDelta = todayCount - yesterdayCount;
+  var deltaSign = todayDelta >= 0 ? '+' : '';
+  var deltaClr = todayDelta >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('statTodaySub').innerHTML =
+    '对比昨日：<span style="color:' + deltaClr + ';">' + deltaSign + todayDelta + '</span>';
+  document.getElementById('statMonth').textContent = monthCount.toLocaleString();
+  document.getElementById('statMonthSub').textContent =
+    '日均：' + Math.round(monthCount / Math.max(1, now.getDate())).toLocaleString() + ' 次';
+  document.getElementById('statTotal').textContent = totalCount.toLocaleString();
+  document.getElementById('statPages').textContent = uniquePages;
+
+  // ---- 月度柱状图 ----
+  var months = [];
+  for (var i = 11; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push(d.toISOString().substring(0, 7));
+  }
+  var monthLabels = months.map(function(m) {
+    var parts = m.split('-');
+    return parseInt(parts[1]) + '月';
+  });
+  var monthData = months.map(function(m) {
+    return data.filter(function(d) { return d.monthStr === m; }).length;
+  });
+
+  var ctx = document.getElementById('monthlyChart').getContext('2d');
+  if (monthlyChartInstance) monthlyChartInstance.destroy();
+  monthlyChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: monthLabels,
+      datasets: [{
+        label: '访问量',
+        data: monthData,
+        backgroundColor: monthData.map(function(v, i) {
+          return months[i] === thisMonthStr ? 'rgba(59,130,246,0.8)' : 'rgba(59,130,246,0.3)';
+        }),
+        borderColor: 'rgba(59,130,246,1)',
+        borderWidth: 1,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          titleColor: '#f1f5f9',
+          bodyColor: '#94a3b8',
+          borderColor: '#334155',
+          borderWidth: 1
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#94a3b8', font: { size: 11 } },
+          grid: { display: false }
+        },
+        y: {
+          ticks: { color: '#94a3b8', font: { size: 11 }, beginAtZero: true },
+          grid: { color: 'rgba(51,65,85,0.3)' }
+        }
+      }
+    }
+  });
+
+  // ---- 本月每日明细 ----
+  var daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  var dailyHTML = '';
+  for (var day = daysInMonth; day >= 1; day--) {
+    var dateStr = thisMonthStr + '-' + String(day).padStart(2, '0');
+    var count = data.filter(function(d) { return d.dateStr === dateStr; }).length;
+    var isToday = dateStr === todayStr;
+    var highlight = isToday ? ' style="font-weight:700;color:var(--primary);"' : '';
+    dailyHTML += '<tr' + (isToday ? ' style="background:rgba(59,130,246,0.08);"' : '') + '>' +
+      '<td' + highlight + '>' + dateStr + '</td>' +
+      '<td' + highlight + '>' + count.toLocaleString() + '</td></tr>';
+  }
+  document.getElementById('dailyTableBody').innerHTML = dailyHTML;
+
+  // ---- 热门页面排行 ----
+  var pageNames = {
+    '/': '🏠 首页', '/index.html': '🏠 首页',
+    '/finance/compound-interest.html': '📈 复利计算器',
+    '/finance/loan-calculator.html': '🏠 贷款计算器',
+    '/finance/roi-calculator.html': '📊 ROI 计算器',
+    '/health/bmi-calculator.html': '⚖️ BMI 计算器',
+    '/health/calorie-calculator.html': '🔥 热量计算器',
+    '/math/percentage-calculator.html': '💯 百分比计算器',
+    '/math/age-calculator.html': '🎂 年龄计算器',
+    '/converters/unit-converter.html': '📏 单位换算器',
+    '/admin/index.html': '🔐 管理后台'
+  };
+
+  function cleanPath(raw) {
+    // Strip local Windows prefix like /C:/Users/.../calculator-site/
+    var idx = raw.indexOf('/calculator-site/');
+    if (idx !== -1) return raw.substring(idx + '/calculator-site'.length) || '/';
+    // If raw starts with /finance, /health, etc. → already clean
+    if (raw.match(/^\/(finance|health|math|converters|admin|js|css)\//) || raw === '/' || raw === '/index.html') {
+      return raw;
+    }
+    // Fallback: extract last 2 meaningful segments from any path
+    var parts = raw.replace(/\/$/, '').split('/');
+    var cleanParts = parts.filter(function(s) { return s && !s.match(/^[A-Z]:$/); });
+    return '/' + cleanParts.slice(-2).join('/');
+  }
+
+  var pageCounts = {};
+  data.forEach(function(d) {
+    var clean = cleanPath(d.page);
+    var name = pageNames[clean] || clean;
+    pageCounts[name] = (pageCounts[name] || 0) + 1;
+    // Store clean path for linking
+    if (!pageCounts['__link__' + name]) pageCounts['__link__' + name] = clean;
+  });
+  var sorted = Object.entries(pageCounts)
+    .filter(function(p) { return !p[0].startsWith('__link__'); })
+    .sort(function(a, b) { return b[1] - a[1]; }).slice(0, 10);
+  var pagesHTML = '';
+  sorted.forEach(function(p) {
+    var linkPath = pageCounts['__link__' + p[0]] || '/';
+    var isPage = linkPath.startsWith('/');
+    pagesHTML += '<tr><td>' +
+      (isPage ? '<a class="page-link" href="..' + linkPath + '" target="_blank">' + p[0] + '</a>' : p[0]) +
+      '</td><td><strong>' + p[1].toLocaleString() + '</strong></td></tr>';
+  });
+  document.getElementById('topPagesBody').innerHTML = pagesHTML || '<tr><td colspan="2" style="text-align:center;color:var(--text2);">暂无数据</td></tr>';
+
+  // 刷新时间
+  document.getElementById('refreshNote').textContent =
+    '数据加载时间：' + new Date().toLocaleString('zh-CN') + '。刷新页面可获取最新数据。';
+}
+
+// 已登录则自动加载
+if (sessionStorage.getItem('admin_authed') === '1') {
+  loadDashboard();
+}
+</script>
+
+</body>
+</html>

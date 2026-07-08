@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tip Calculator - Free Online Tip & Bill Split Calculator</title>
+  <meta name="description" content="Free tip calculator: calculate tip amount, total bill per person. Split the check easily. Supports custom tip percentages. No sign-up required.">
+  <meta name="keywords" content="tip calculator, bill split, restaurant tip, gratuity calculator, check splitter, tip percentage calculator">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/i18n.js?v=3"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="site-logo"><span class="logo-icon">🛠️</span> Free Online Calculators</a>
+      <nav class="site-nav">
+        <a href="../index.html" data-i18n="nav.home">Home</a>
+        <a href="../index.html#finance" class="active" data-i18n="nav.finance">Finance</a>
+        <a href="../index.html#health" data-i18n="nav.health">Health</a>
+        <a href="../index.html#math" data-i18n="nav.math">Math</a>
+        <a href="../index.html#converters" data-i18n="nav.convert">Convert</a>
+        <a href="../index.html#text" data-i18n="nav.text">Text</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option><option value="zh">简体中文</option>
+          <option value="es">Español</option><option value="de">Deutsch</option><option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> <span>›</span> <a href="../index.html#finance">Financial Calculators</a> <span>›</span> Tip Calculator
+    </div>
+
+    <h1 data-i18n="tip.title">💵 Tip Calculator</h1>
+    <p class="intro" data-i18n="tip.intro">Calculate the tip and split the bill easily.</p>
+
+    <div class="calc-card">
+      <div class="input-row">
+        <div class="input-group">
+          <label for="bill" data-i18n="tip.input.bill">Bill Amount ($)</label>
+          <input type="number" id="bill" value="85.00" min="0" step="0.01">
+        </div>
+        <div class="input-group">
+          <label for="tipPct" data-i18n="tip.input.tip">Tip Percentage</label>
+          <select id="tipPct">
+            <option value="10" data-i18n="tip.opt.10">10% — Basic</option>
+            <option value="15" selected data-i18n="tip.opt.15">15% — Standard</option>
+            <option value="18" data-i18n="tip.opt.18">18% — Good Service</option>
+            <option value="20" data-i18n="tip.opt.20">20% — Great Service</option>
+            <option value="25" data-i18n="tip.opt.25">25% — Excellent</option>
+            <option value="custom" data-i18n="tip.opt.custom">Custom (%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-row" id="customTipRow" style="display:none;">
+        <div class="input-group">
+          <label for="customTip" data-i18n="tip.input.custom">Custom Tip (%)</label>
+          <input type="number" id="customTip" value="18" min="0" max="100" step="0.1">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="people" data-i18n="tip.input.people">Number of People</label>
+          <input type="number" id="people" value="2" min="1" max="100">
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calculate()">💵 <span data-i18n="btn.calculate">Calculate</span></button>
+      <button class="btn-reset" onclick="resetForm()" data-i18n="btn.reset">Reset</button>
+
+      <div class="result-box" id="resultBox">
+        <div class="result-amount" id="resultAmount"></div>
+        <div class="result-detail" id="resultDetail"></div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2 data-i18n="tip.guide.title">📖 Tipping Guide (United States)</h2>
+      <div class="note note-info" style="margin-top:12px;" data-i18n="tip.guide.note">
+        💡 In the US, tipping 15-20% at restaurants is standard.
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>🔗 Related Tools</h2>
+      <div class="related-tools">
+        <a href="compound-interest.html">📈 Compound Interest</a>
+        <a href="loan-calculator.html">🏠 Loan Calculator</a>
+        <a href="../math/percentage-calculator.html">💯 Percentage Calculator</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p data-i18n="site.footer">🛠️ Free Online Calculators — All computations run locally in your browser. We never collect your data.</p>
+  </footer>
+
+  <script>
+    document.getElementById('tipPct').addEventListener('change', function() {
+      document.getElementById('customTipRow').style.display = this.value === 'custom' ? '' : 'none';
+    });
+
+    function getTipPct() {
+      var sel = document.getElementById('tipPct').value;
+      return sel === 'custom' ? (parseFloat(document.getElementById('customTip').value) || 0) : parseFloat(sel);
+    }
+
+    function calculate() {
+      var bill = parseFloat(document.getElementById('bill').value) || 0;
+      var tipPct = getTipPct();
+      var people = parseInt(document.getElementById('people').value) || 1;
+
+      if (bill <= 0 || people < 1) { alert('Please enter valid numbers.'); return; }
+
+      var tipAmount = bill * tipPct / 100;
+      var total = bill + tipAmount;
+      var perPerson = total / people;
+      var tipPerPerson = tipAmount / people;
+
+      document.getElementById('resultAmount').innerHTML =
+        '💵 ' + t('tip.result.tip') + ' <strong>$' + fmt(tipAmount) + '</strong> &ensp;|&ensp; ' + t('tip.result.total') + ' <strong>$' + fmt(total) + '</strong>';
+
+      var detailHTML = t('tip.result.per') + ' <strong>$' + fmt(perPerson) + '</strong>';
+      if (people > 1) detailHTML += '<br>' + people + ' ' + t('tip.result.per').toLowerCase() + ': $' + fmt(bill/people) + ' + $' + fmt(tipPerPerson);
+      document.getElementById('resultDetail').innerHTML = detailHTML;
+      document.getElementById('resultBox').classList.add('show');
+    }
+
+    function resetForm() {
+      document.getElementById('bill').value = '85.00';
+      document.getElementById('tipPct').value = '15';
+      document.getElementById('customTip').value = '18';
+      document.getElementById('people').value = '2';
+      document.getElementById('customTipRow').style.display = 'none';
+      document.getElementById('resultBox').classList.remove('show');
+    }
+
+    function fmt(n) { return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      calculate();
+      document.getElementById('langSelect').value = LANG; applyI18n(); calculate();
+    });
+    window.switchLang = function(lang) {
+      LANG = lang;
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'es' ? 'es' : lang === 'de' ? 'de' : lang === 'fr' ? 'fr' : 'en';
+      localStorage.setItem('calc_site_lang', lang);
+      applyI18n();
+      calculate();
+    };
+  </script>
+  <script src="../js/tracker.js"></script>
+</body>
+</html>

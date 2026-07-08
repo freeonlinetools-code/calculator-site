@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Calculator - Free Date of Birth Age & Days Between Dates</title>
+  <meta name="description" content="Free age calculator: enter your birth date to get exact age in years, months, and days. Also calculate the number of days between any two dates.">
+  <meta name="keywords" content="age calculator, date of birth, days between dates, date difference, how old am I, birthday calculator, countdown">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/i18n.js?v=3"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Age & Date Calculator",
+    "url": "https://freeonlinetools-code.github.io/calculator-site/math/age-calculator.html",
+    "description": "Free online age and date difference calculator.",
+    "applicationCategory": "UtilityApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="site-logo"><span class="logo-icon">🛠️</span> Free Online Calculators</a>
+      <nav class="site-nav">
+        <a href="../index.html" data-i18n="nav.home">Home</a>
+        <a href="../index.html#finance" data-i18n="nav.finance">Finance</a>
+        <a href="../index.html#health" data-i18n="nav.health">Health</a>
+        <a href="../index.html#math" class="active" data-i18n="nav.math">Math</a>
+        <a href="../index.html#converters" data-i18n="nav.convert">Convert</a>
+      </nav>
+      <div class="lang-switcher">
+        <label data-i18n="lang.label">Language</label>
+        <select id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">English</option>
+          <option value="zh">简体中文</option>
+          <option value="es">Español</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> <span>›</span> <a href="../index.html#math">Math Tools</a> <span>›</span> Age Calculator
+    </div>
+
+    <h1 data-i18n="age.title">🎂 Age <h1>🎂 Age &amp; Date Calculatoramp; Date Calculator</h1>
+    <p class="intro" data-i18n="age.intro">Calculate your exact age from your date of birth. Also find how many days are between any two dates.</p>
+
+    <!-- Mode 1 -->
+    <div class="calc-card">
+      <h3 style="margin-bottom:12px;">1️⃣ Calculate My Age</h3>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="birthdate">Date of Birth</label>
+          <input type="date" id="birthdate" value="1995-06-15">
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calcAge()">🎂 Calculate</button>
+      <div class="result-box" id="resultAge">
+        <div class="result-amount" id="resultAgeText"></div>
+        <div class="result-detail" id="resultAgeDetail"></div>
+      </div>
+    </div>
+
+    <!-- Mode 2 -->
+    <div class="calc-card">
+      <h3 style="margin-bottom:12px;">2️⃣ Days Between Two Dates</h3>
+      <div class="input-row">
+        <div class="input-group"><label for="date1">Start Date</label><input type="date" id="date1"></div>
+        <div class="input-group"><label for="date2">End Date</label><input type="date" id="date2"></div>
+      </div>
+      <button class="btn-calc" onclick="calcDateDiff()">📅 Calculate</button>
+      <div class="result-box" id="resultDiff">
+        <div class="result-amount" id="resultDiffText"></div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>📖 About Age Calculation</h2>
+      <p>This calculator computes your exact <strong>chronological age</strong> — the number of complete years, months, and days since your date of birth. This is the standard age used in legal, medical, and official contexts.</p>
+      <p>The date difference mode is useful for: counting down to an event, calculating the length of a project, finding how many days since a milestone, or checking how long you've been together with someone.</p>
+    </div>
+
+    <div class="content-section">
+      <h2>🔗 Related Tools</h2>
+      <div class="related-tools">
+        <a href="percentage-calculator.html">💯 Percentage Calculator</a>
+        <a href="../converters/unit-converter.html">📏 Unit Converter</a>
+        <a href="../finance/compound-interest.html">📈 Compound Interest Calculator</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="container" style="margin-bottom:40px;"><div class="feedback-section"><h3 data-i18n="feedback.title">📬 Feedback & Suggestions</h3><ol><li data-i18n="feedback.li1">Calculation or translation errors — please point them out.</li><li data-i18n="feedback.li2">A tool you need is missing from our collection.</li><li data-i18n="feedback.li3">Any other suggestions to improve the site.</li></ol><a class="feedback-email" href="mailto:free_online_tools@163.com" data-i18n="feedback.email">📧 free_online_tools@163.com</a></div></div>
+
+<footer class="site-footer">
+    <p>🛠️ Free Online Calculators — All computations run locally in your browser.</p>
+  </footer>
+
+  <script>
+    (function() {
+      var t = new Date().toISOString().split('T')[0];
+      document.getElementById('date1').value = t;
+      document.getElementById('date2').value = t;
+    })();
+
+    function calcAge() {
+      var bs = document.getElementById('birthdate').value;
+      if (!bs) { alert('Please select your date of birth.'); return; }
+      var birth = new Date(bs);
+      var today = new Date();
+      if (birth > today) { alert('Date of birth cannot be in the future.'); return; }
+
+      var y = today.getFullYear() - birth.getFullYear();
+      var m = today.getMonth() - birth.getMonth();
+      var d = today.getDate() - birth.getDate();
+      if (d < 0) { m--; d += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); }
+      if (m < 0) { y--; m += 12; }
+
+      var totalDays = Math.floor((today - birth) / 86400000);
+      var weeks = Math.floor(totalDays / 7);
+      var nextBday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+      if (nextBday <= today) nextBday.setFullYear(today.getFullYear() + 1);
+      var daysUntil = Math.ceil((nextBday - today) / 86400000);
+
+      document.getElementById('resultAgeText').innerHTML =
+        '🎉 You are <strong>' + y + ' years, ' + m + ' months, ' + d + ' days</strong> old';
+      document.getElementById('resultAgeDetail').innerHTML =
+        'That\'s <strong>' + totalDays.toLocaleString() + ' days</strong> (~' + weeks.toLocaleString() + ' weeks)' +
+        ' &ensp;|&ensp; Next birthday in: ' + daysUntil + ' days';
+      document.getElementById('resultAge').classList.add('show');
+    }
+
+    function calcDateDiff() {
+      var d1 = document.getElementById('date1').value;
+      var d2 = document.getElementById('date2').value;
+      if (!d1 || !d2) { alert('Please select both dates.'); return; }
+      var diff = Math.abs(new Date(d2) - new Date(d1));
+      var days = Math.floor(diff / 86400000);
+      document.getElementById('resultDiffText').innerHTML =
+        d1 + ' ↔ ' + d2 + '<br>Difference: <strong>' + days.toLocaleString() + ' days</strong>' +
+        ' (' + Math.floor(days / 7).toLocaleString() + ' weeks / ' + Math.floor(days / 30.44) + ' months / ' + (days / 365.25).toFixed(1) + ' years)';
+      document.getElementById('resultDiff').classList.add('show');
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      if (document.getElementById('birthdate').value) calcAge();
+      initI18n();
+    });
+    function initI18n() {
+      document.getElementById('langSelect').value = LANG;
+      applyI18n(); calculate();
+    }
+  </script>
+  <script>window.switchLang=function(lang){LANG=lang;document.documentElement.lang=lang==="zh"?"zh-CN":lang;localStorage.setItem("calc_site_lang",lang);applyI18n();if(typeof calculate==="function")calculate();if(typeof convert==="function")convert();if(typeof switchCategory==="function")switchCategory();};</script>
+<script src="../js/tracker.js"></script>
+</body>
+</html>
