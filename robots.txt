@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://freeonlinetools-code.github.io/calculator-site/sitemap.xml
+Sitemap: https://www.freeonlinetools666.com/sitemap.xml
